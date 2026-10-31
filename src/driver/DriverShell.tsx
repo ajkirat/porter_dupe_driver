@@ -7,6 +7,7 @@ import AuthScreen from "@/components/AuthScreen";
 import { HomeIcon, TicketIcon, UserIcon, WalletIcon } from "@/components/icons";
 import { SetupNotice } from "@/components/RequireUser";
 import { useSession } from "@/components/useSession";
+import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
 import { isConfigured, supabase } from "@/lib/supabase";
 import type { Driver, DriverPass } from "@/lib/types";
 import { DriverProvider } from "./DriverContext";
@@ -131,6 +132,9 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
           <div className="card space-y-3">
             <h1 className="text-xl font-semibold">Thanks, {driver.full_name.split(" ")[0]}</h1>
             <p className="text-stone-600">We&apos;re checking your documents. You&apos;ll be able to go online once approved. This screen updates by itself.</p>
+            <a className="btn w-full border-green-600 text-green-800" href={docsWhatsAppUrl(driver.full_name, driver.phone)} target="_blank" rel="noreferrer">
+              Send documents on WhatsApp ({DOCS_WHATSAPP})
+            </a>
             <button className="btn w-full" onClick={() => setEditing(true)}>
               Edit details
             </button>

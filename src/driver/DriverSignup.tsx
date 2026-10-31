@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
 import { errorText, supabase } from "@/lib/supabase";
 import { KYC_DOCS, type Driver } from "@/lib/types";
 
@@ -25,13 +26,14 @@ export default function DriverSignup({
   const [files, setFiles] = useState<Record<string, File>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [viaWhatsApp, setViaWhatsApp] = useState(false);
 
   const docs = existing?.kyc_docs ?? {};
   const missing = KYC_DOCS.filter((d) => !files[d.key] && !docs[d.key]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (missing.length) return setError(`Please add: ${missing.map((d) => d.label).join(", ")}`);
+    if (missing.length && !viaWhatsApp) return setError(`Please add: ${missing.map((d) => d.label).join(", ")}`);
     setBusy(true);
     setError("");
     try {
@@ -129,6 +131,15 @@ export default function DriverSignup({
           </label>
         ))}
       </fieldset>
+      <div className="space-y-2 rounded-xl bg-green-50 p-3 text-sm">
+        <p className="font-medium text-green-900">Easier on WhatsApp?</p>
+        <a className="btn w-full border-green-600 text-green-800" href={docsWhatsAppUrl(form.full_name, phone)} target="_blank" rel="noreferrer">
+          Send documents to {DOCS_WHATSAPP} on WhatsApp
+        </a>
+        <label className="flex items-center gap-2 text-green-900">
+          <input type="checkbox" checked={viaWhatsApp} onChange={(e) => setViaWhatsApp(e.target.checked)} />I&apos;ll send my documents on WhatsApp instead of uploading
+        </label>
+      </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button className="btn btn-primary w-full py-3" disabled={busy}>
         {busy ? "Uploading…" : "Submit for approval"}
