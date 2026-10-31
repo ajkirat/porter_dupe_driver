@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import AuthScreen from "@/components/AuthScreen";
 import { HomeIcon, TicketIcon, UserIcon, WalletIcon } from "@/components/icons";
+import { useT } from "@/i18n";
 import { SetupNotice } from "@/components/RequireUser";
 import { useSession } from "@/components/useSession";
 import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
@@ -22,6 +23,7 @@ const TABS = [
 
 function TabBar() {
   const path = usePathname();
+  const { t } = useT();
   return (
     <nav className="grid grid-cols-4 border-t border-stone-200 bg-white pb-[env(safe-area-inset-bottom)]">
       {TABS.map(({ href, label, Icon }) => {
@@ -29,7 +31,7 @@ function TabBar() {
         return (
           <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${on ? "text-brand" : "text-stone-500"}`}>
             <Icon className="h-6 w-6" />
-            {label}
+            {t(label)}
           </Link>
         );
       })}
@@ -38,6 +40,7 @@ function TabBar() {
 }
 
 function OfflineBanner() {
+  const { t } = useT();
   const [offline, setOffline] = useState(false);
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine);
@@ -50,7 +53,7 @@ function OfflineBanner() {
     };
   }, []);
   if (!offline) return null;
-  return <div className="bg-red-600 px-4 py-1.5 text-center text-xs font-medium text-white">No internet. Reconnecting…</div>;
+  return <div className="bg-red-600 px-4 py-1.5 text-center text-xs font-medium text-white">{t("No internet. Reconnecting…")}</div>;
 }
 
 export function Frame({ children, tabs = true }: { children: ReactNode; tabs?: boolean }) {
@@ -67,6 +70,11 @@ export function Frame({ children, tabs = true }: { children: ReactNode; tabs?: b
   );
 }
 
+function Loading() {
+  const { t } = useT();
+  return <p className="text-stone-500">{t("Loading…")}</p>;
+}
+
 function Centered({ children }: { children: ReactNode }) {
   return <div className="flex h-full flex-col justify-center p-6 text-center">{children}</div>;
 }
@@ -75,6 +83,7 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
   const [driver, setDriver] = useState<Driver | null | undefined>(undefined);
   const [pass, setPass] = useState<DriverPass | null>(null);
   const [editing, setEditing] = useState(false);
+  const { t } = useT();
 
   const load = useCallback(async () => {
     const sb = supabase();
@@ -99,7 +108,7 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
     return () => clearInterval(t);
   }, [load]);
 
-  if (driver === undefined) return <Frame tabs={false}><Centered><p className="text-stone-500">Loading…</p></Centered></Frame>;
+  if (driver === undefined) return <Frame tabs={false}><Centered><Loading /></Centered></Frame>;
 
   if (!driver || editing || driver.kyc_status === "rejected") {
     return (
@@ -107,7 +116,7 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
         <div className="space-y-4 p-4 pt-8">
           {driver?.kyc_status === "rejected" && (
             <div className="card border-red-200 bg-red-50 text-sm text-red-800">
-              Your documents were not approved{driver.kyc_note ? `: ${driver.kyc_note}` : "."} Please fix and resubmit.
+              {t("Your documents were not approved")}{driver.kyc_note ? `: ${driver.kyc_note}` : "."} {t("Please fix and resubmit.")}
             </div>
           )}
           <DriverSignup
@@ -130,13 +139,13 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
       <Frame tabs={false}>
         <Centered>
           <div className="card space-y-3">
-            <h1 className="text-xl font-semibold">Thanks, {driver.full_name.split(" ")[0]}</h1>
-            <p className="text-stone-600">We&apos;re checking your documents. You&apos;ll be able to go online once approved. This screen updates by itself.</p>
+            <h1 className="text-xl font-semibold">{t("Thanks, {name}", { name: driver.full_name.split(" ")[0] })}</h1>
+            <p className="text-stone-600">{t("We're checking your documents. You'll be able to go online once approved. This screen updates by itself.")}</p>
             <a className="btn w-full border-green-600 text-green-800" href={docsWhatsAppUrl(driver.full_name, driver.phone)} target="_blank" rel="noreferrer">
-              Send documents on WhatsApp ({DOCS_WHATSAPP})
+              {t("Send documents on WhatsApp")} ({DOCS_WHATSAPP})
             </a>
             <button className="btn w-full" onClick={() => setEditing(true)}>
-              Edit details
+              {t("Edit details")}
             </button>
             <SignOut />
           </div>
@@ -149,9 +158,10 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
 }
 
 function SignOut() {
+  const { t } = useT();
   return (
     <button className="btn w-full" onClick={() => void supabase().auth.signOut()}>
-      Sign out
+      {t("Sign out")}
     </button>
   );
 }
@@ -159,9 +169,10 @@ function SignOut() {
 export { SignOut };
 
 export default function DriverShell({ children }: { children: ReactNode }) {
+  const { t } = useT();
   const { user, loading } = useSession();
   if (!isConfigured()) return <Frame tabs={false}><div className="p-4 pt-10"><SetupNotice /></div></Frame>;
-  if (loading) return <Frame tabs={false}><Centered><p className="text-stone-500">Loading…</p></Centered></Frame>;
+  if (loading) return <Frame tabs={false}><Centered><p className="text-stone-500">{t("Loading…")}</p></Centered></Frame>;
   if (!user)
     return (
       <Frame tabs={false}>

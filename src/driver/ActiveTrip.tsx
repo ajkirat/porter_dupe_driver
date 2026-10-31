@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Map from "@/components/Map";
 import { PhoneIcon } from "@/components/icons";
+import { useT } from "@/i18n";
 import { navigationUrl } from "@/lib/geo";
 import { formatKm } from "@/lib/fare";
 import { PAY_AT_LABEL } from "@/lib/types";
@@ -13,6 +14,7 @@ const CANCEL_REASONS = ["Customer not reachable", "Vehicle problem", "Too far fr
 // The trip in progress: navigate, tell the customer you've arrived, confirm each leg with an OTP, collect payment.
 export default function ActiveTrip() {
   const { current: job, me, act, error } = useDriver();
+  const { t } = useT();
   const [otp, setOtp] = useState("");
   const [busy, setBusy] = useState(false);
   const [cancelling, setCancelling] = useState(false);
@@ -23,8 +25,8 @@ export default function ActiveTrip() {
   const arrived = Boolean(job.driver_arrived_at);
   const target = pickupLeg ? { lat: job.pickup_lat, lng: job.pickup_lng } : { lat: job.drop_lat, lng: job.drop_lng };
   const contact = pickupLeg
-    ? { name: job.pickup_contact_name || "sender", phone: job.pickup_contact_phone }
-    : { name: job.receiver_name || "receiver", phone: job.receiver_phone };
+    ? { name: job.pickup_contact_name || t("sender"), phone: job.pickup_contact_phone }
+    : { name: job.receiver_name || t("receiver"), phone: job.receiver_phone };
   const collectNow = (pickupLeg && job.pay_at === "pickup") || (!pickupLeg && job.pay_at === "drop");
   const showOtp = !pickupLeg || arrived;
 
@@ -39,8 +41,8 @@ export default function ActiveTrip() {
   return (
     <div className="space-y-3 p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold">{pickupLeg ? (arrived ? "At pickup" : "Go to pickup") : "Deliver the parcel"}</h2>
-        <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-900">{pickupLeg ? "Step 1 of 2" : "Step 2 of 2"}</span>
+        <h2 className="text-lg font-bold">{pickupLeg ? (arrived ? t("At pickup") : t("Go to pickup")) : t("Deliver the parcel")}</h2>
+        <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-900">{pickupLeg ? t("Step 1 of 2") : t("Step 2 of 2")}</span>
       </div>
 
       <div className="relative h-52 overflow-hidden rounded-2xl">
@@ -54,38 +56,38 @@ export default function ActiveTrip() {
       </div>
 
       <div className="card space-y-2">
-        <p className="text-sm text-stone-500">{pickupLeg ? "Pickup" : "Drop"}</p>
+        <p className="text-sm text-stone-500">{pickupLeg ? t("Pickup") : t("Drop")}</p>
         <p className="font-medium">{pickupLeg ? job.pickup_address : job.drop_address}</p>
-        {job.item_note && <p className="text-xs text-stone-500">Item: {job.item_note}</p>}
+        {job.item_note && <p className="text-xs text-stone-500">{t("Item: {x}", { x: job.item_note })}</p>}
         <div className="grid grid-cols-2 gap-2 pt-1">
           <a className="btn btn-primary" href={navigationUrl(target)} target="_blank" rel="noreferrer">
-            Navigate
+            {t("Navigate")}
           </a>
           {contact.phone ? (
             <a className="btn gap-2" href={`tel:${contact.phone}`}>
-              <PhoneIcon className="h-4 w-4" /> Call {contact.name}
+              <PhoneIcon className="h-4 w-4" /> {t("Call {name}", { name: contact.name })}
             </a>
           ) : (
-            <span className="btn opacity-50">No number</span>
+            <span className="btn opacity-50">{t("No number")}</span>
           )}
         </div>
       </div>
 
       {collectNow && (
         <div className="rounded-2xl bg-green-600 p-4 text-white">
-          <p className="text-sm opacity-90">Collect {PAY_AT_LABEL[job.pay_at]} by {job.payment_mode === "cash" ? "cash" : "UPI"}</p>
+          <p className="text-sm opacity-90">{t("Collect {when} by {mode}", { when: t(PAY_AT_LABEL[job.pay_at]), mode: job.payment_mode === "cash" ? t("cash") : "UPI" })}</p>
           <p className="text-3xl font-extrabold">₹{job.fare_rupees}</p>
         </div>
       )}
       {!collectNow && (
         <p className="rounded-xl bg-stone-100 px-3 py-2 text-sm text-stone-700">
-          ₹{job.fare_rupees} is collected {PAY_AT_LABEL[job.pay_at]} · {formatKm(job.distance_m)} trip
+          {t("₹{fare} is collected {when} · {km} trip", { fare: job.fare_rupees, when: t(PAY_AT_LABEL[job.pay_at]), km: formatKm(job.distance_m) })}
         </p>
       )}
 
       {pickupLeg && !arrived && (
         <button className="btn btn-primary w-full py-3 text-base" disabled={busy} onClick={() => run("mark_arrived", { p_job: job.id })}>
-          I&apos;ve arrived at pickup
+          {t("I've arrived at pickup")}
         </button>
       )}
 
@@ -98,7 +100,7 @@ export default function ActiveTrip() {
           }}
         >
           <label className="label">
-            {pickupLeg ? "Pickup OTP from the sender" : "Drop OTP from the receiver"}
+            {pickupLeg ? t("Pickup OTP from the sender") : t("Drop OTP from the receiver")}
             <input
               className="input text-center text-2xl tracking-[0.5em]"
               inputMode="numeric"
@@ -109,7 +111,7 @@ export default function ActiveTrip() {
             />
           </label>
           <button className="btn btn-primary w-full py-3 text-base" disabled={busy || otp.length !== 4}>
-            {pickupLeg ? "Confirm pickup" : "Confirm delivery"}
+            {pickupLeg ? t("Confirm pickup") : t("Confirm delivery")}
           </button>
         </form>
       )}
@@ -119,25 +121,25 @@ export default function ActiveTrip() {
       {pickupLeg &&
         (cancelling ? (
           <div className="card space-y-2">
-            <p className="label">Why are you dropping this job?</p>
+            <p className="label">{t("Why are you dropping this job?")}</p>
             <select className="input" value={reason} onChange={(e) => setReason(e.target.value)}>
               {CANCEL_REASONS.map((r) => (
-                <option key={r}>{r}</option>
+                <option key={r} value={r}>{t(r)}</option>
               ))}
             </select>
             <div className="grid grid-cols-2 gap-2">
               <button className="btn" onClick={() => setCancelling(false)}>
-                Keep job
+                {t("Keep job")}
               </button>
               <button className="btn btn-danger" disabled={busy} onClick={() => run("driver_cancel_job", { p_job: job.id, p_reason: reason })}>
-                Drop job
+                {t("Drop job")}
               </button>
             </div>
-            <p className="text-xs text-stone-500">The job goes back to other drivers. Dropping often may affect your account.</p>
+            <p className="text-xs text-stone-500">{t("The job goes back to other drivers. Dropping often may affect your account.")}</p>
           </div>
         ) : (
           <button className="w-full py-2 text-sm text-stone-500 underline" onClick={() => setCancelling(true)}>
-            Can&apos;t do this job?
+            {t("Can't do this job?")}
           </button>
         ))}
     </div>

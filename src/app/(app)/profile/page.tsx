@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import LanguagePicker from "@/i18n/LanguagePicker";
+import { useT } from "@/i18n";
 import { SignOut } from "@/driver/DriverShell";
 import { useDriver } from "@/driver/DriverContext";
 import DriverSignup from "@/driver/DriverSignup";
@@ -11,13 +13,14 @@ const SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
 
 export default function Profile() {
   const { driver, reload } = useDriver();
+  const { t } = useT();
   const [editing, setEditing] = useState(false);
 
   if (editing)
     return (
       <div className="space-y-3 p-4">
         <button className="text-sm text-brand" onClick={() => setEditing(false)}>
-          ← Back
+          {t("← Back")}
         </button>
         <DriverSignup
           userId={driver.id}
@@ -40,47 +43,52 @@ export default function Profile() {
 
   return (
     <div className="space-y-4 p-4">
-      <h1 className="text-xl font-bold">Profile</h1>
+      <h1 className="text-xl font-bold">{t("Profile")}</h1>
       <div className="card divide-y divide-stone-100 py-2">
-        {row("Name", driver.full_name)}
-        {row("Phone", driver.phone)}
-        {row("Bike", driver.vehicle_number)}
-        {row("Licence", driver.licence_number)}
+        {row(t("Name"), driver.full_name)}
+        {row(t("Phone"), driver.phone)}
+        {row(t("Bike"), driver.vehicle_number)}
+        {row(t("Licence"), driver.licence_number)}
         {row("UPI", driver.upi_id ?? "")}
         <div className="pt-3">
           <button className="btn w-full" onClick={() => setEditing(true)}>
-            Edit details
+            {t("Edit details")}
           </button>
         </div>
       </div>
 
       <div className="card space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Documents</h2>
-          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">Approved</span>
+          <h2 className="font-semibold">{t("Documents")}</h2>
+          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">{t("Approved")}</span>
         </div>
         {KYC_DOCS.map((d) => (
           <div key={d.key} className="flex justify-between text-sm">
-            <span>{d.label}</span>
-            <span className={driver.kyc_docs[d.key] ? "text-green-700" : "text-red-600"}>{driver.kyc_docs[d.key] ? "✓ Uploaded" : "Missing"}</span>
+            <span>{t(d.label)}</span>
+            <span className={driver.kyc_docs[d.key] ? "text-green-700" : "text-red-600"}>{driver.kyc_docs[d.key] ? t("✓ Uploaded") : t("Missing")}</span>
           </div>
         ))}
       </div>
 
       <div className="card space-y-2">
-        <h2 className="font-semibold">Need help?</h2>
+        <h2 className="font-semibold">{t("Need help?")}</h2>
         {SUPPORT ? (
           <div className="grid grid-cols-2 gap-2">
             <a className="btn gap-2" href={`tel:${SUPPORT}`}>
-              <PhoneIcon className="h-4 w-4" /> Call us
+              <PhoneIcon className="h-4 w-4" /> {t("Call us")}
             </a>
             <a className="btn" href={`https://wa.me/${SUPPORT.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">
               WhatsApp
             </a>
           </div>
         ) : (
-          <p className="text-sm text-stone-500">Support contact isn&apos;t set up yet.</p>
+          <p className="text-sm text-stone-500">{t("Support contact isn't set up yet.")}</p>
         )}
+      </div>
+
+      <div className="card space-y-2">
+        <h2 className="font-semibold">{t("Language")}</h2>
+        <LanguagePicker />
       </div>
 
       <SignOut />

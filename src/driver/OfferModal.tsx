@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/i18n";
 import { playAlert } from "@/lib/alert";
 import type { LatLng } from "@/lib/geo";
 import type { Job } from "@/lib/types";
@@ -24,6 +25,7 @@ export default function OfferModal({
   onReject: () => void;
   onExpire: () => void;
 }) {
+  const { t } = useT();
   const [left, setLeft] = useState(SECONDS);
 
   useEffect(() => {
@@ -37,11 +39,11 @@ export default function OfferModal({
   }, [left, onExpire]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center" role="dialog" aria-modal aria-label="New request">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center" role="dialog" aria-modal aria-label={t("New request")}>
       <div className="w-full max-w-md space-y-3 rounded-t-3xl bg-stone-50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">New request</h2>
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 font-bold text-white" aria-label={`${Math.max(left, 0)} seconds left`}>
+          <h2 className="text-lg font-bold">{t("New request")}</h2>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 font-bold text-white" aria-label={t("{n} seconds left", { n: Math.max(left, 0) })}>
             {Math.max(left, 0)}
           </span>
         </div>
@@ -51,10 +53,10 @@ export default function OfferModal({
         <JobCard job={job} from={me} />
         <div className="grid grid-cols-3 gap-2">
           <button className="btn py-3" onClick={onReject} disabled={busy}>
-            Pass
+            {t("Pass")}
           </button>
           <button className="btn btn-primary col-span-2 py-3 text-base" onClick={onAccept} disabled={busy}>
-            Accept ₹{job.fare_rupees}
+            {t("Accept ₹{fare}", { fare: job.fare_rupees })}
           </button>
         </div>
       </div>

@@ -52,13 +52,16 @@ export function summarize(jobs: EarningsJob[], now: Date): EarningsSummary {
 }
 
 // "2 days 3 h left", "5 h 10 min left", or "Expired".
-export function timeLeft(endsAt: string, now: Date): string {
+type Tr = (key: string, vars?: Record<string, string | number>) => string;
+const plain: Tr = (key, vars) => (vars ? key.replace(/\{(\w+)\}/g, (_, k) => String(vars[k])) : key);
+
+export function timeLeft(endsAt: string, now: Date, t: Tr = plain): string {
   const ms = new Date(endsAt).getTime() - now.getTime();
-  if (ms <= 0) return "Expired";
+  if (ms <= 0) return t("Expired");
   const mins = Math.floor(ms / 60000);
   const days = Math.floor(mins / 1440);
   const hours = Math.floor((mins % 1440) / 60);
-  if (days > 0) return `${days} day${days > 1 ? "s" : ""} ${hours} h left`;
-  if (hours > 0) return `${hours} h ${mins % 60} min left`;
-  return `${mins} min left`;
+  if (days > 0) return t(days > 1 ? "{d} days {h} h left" : "{d} day {h} h left", { d: days, h: hours });
+  if (hours > 0) return t("{h} h {m} min left", { h: hours, m: mins % 60 });
+  return t("{m} min left", { m: mins });
 }

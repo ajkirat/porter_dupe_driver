@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
+import { useT } from "@/i18n";
 import { uploadSelfie } from "@/lib/selfie";
 import { errorText, supabase } from "@/lib/supabase";
 import { KYC_DOCS, type Driver } from "@/lib/types";
@@ -18,6 +19,7 @@ export default function DriverSignup({
   existing: Driver | null;
   onDone: () => void;
 }) {
+  const { t } = useT();
   const [form, setForm] = useState({
     full_name: existing?.full_name ?? "",
     vehicle_number: existing?.vehicle_number ?? "",
@@ -35,8 +37,8 @@ export default function DriverSignup({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selfie && !docs.selfie) return setError("Please take a selfie. It is required.");
-    if (missing.length && !viaWhatsApp) return setError(`Please add: ${missing.map((d) => d.label).join(", ")}`);
+    if (!selfie && !docs.selfie) return setError(t("Please take a selfie. It is required."));
+    if (missing.length && !viaWhatsApp) return setError(t("Please add: {list}", { list: missing.map((d) => t(d.label)).join(", ") }));
     setBusy(true);
     setError("");
     try {
@@ -88,47 +90,47 @@ export default function DriverSignup({
   return (
     <form onSubmit={submit} className="card space-y-4">
       <div>
-        <h1 className="text-xl font-semibold">{existing ? "Update your documents" : "Drive with us"}</h1>
+        <h1 className="text-xl font-semibold">{existing ? t("Update your documents") : t("Drive with us")}</h1>
         <p className="mt-1 text-sm text-stone-600">
-          Keep every rupee of your fares. You pay only a flat daily or weekly pass once you&apos;re approved.
+          {t("Keep every rupee of your fares. You pay only a flat daily or weekly pass once you're approved.")}
         </p>
       </div>
       <label className="label">
-        Full name (as on licence)
+        {t("Full name (as on licence)")}
         <input className="input" required {...field("full_name")} />
       </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="label">
-          Bike number
+          {t("Bike number")}
           <input className="input uppercase" placeholder="KA01AB1234" required {...field("vehicle_number")} />
         </label>
         <label className="label">
-          Licence number
+          {t("Licence number")}
           <input className="input" required {...field("licence_number")} />
         </label>
       </div>
       <label className="label">
-        Your UPI ID (customers pay you here)
+        {t("Your UPI ID (customers pay you here)")}
         <input className="input" placeholder="name@okaxis" {...field("upi_id")} />
       </label>
       <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border-2 border-brand p-3 text-sm">
         <span>
-          <b>Selfie (required)</b>
-          <span className="block text-xs text-stone-500">{selfie ? selfie.name : docs.selfie ? "Taken. Tap to retake." : "Take a clear photo of your face"}</span>
+          <b>{t("Selfie (required)")}</b>
+          <span className="block text-xs text-stone-500">{selfie ? selfie.name : docs.selfie ? t("Taken. Tap to retake.") : t("Take a clear photo of your face")}</span>
         </span>
-        <span className={`btn shrink-0 py-1.5 ${selfie || docs.selfie ? "text-green-700" : ""}`}>{selfie || docs.selfie ? "✓ Retake" : "Open camera"}</span>
+        <span className={`btn shrink-0 py-1.5 ${selfie || docs.selfie ? "text-green-700" : ""}`}>{selfie || docs.selfie ? t("✓ Retake") : t("Open camera")}</span>
         <input type="file" accept="image/*" capture="user" className="sr-only" onChange={(e) => setSelfie(e.target.files?.[0] ?? selfie)} />
       </label>
       <fieldset className="space-y-2">
-        <legend className="label mb-1">Documents</legend>
+        <legend className="label mb-1">{t("Documents")}</legend>
         {KYC_DOCS.map((d) => (
           <label key={d.key} className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-stone-200 p-3 text-sm">
             <span className="min-w-0 truncate">
-              {d.label}
+              {t(d.label)}
               {files[d.key] && <span className="ml-2 text-xs text-stone-500">{files[d.key].name}</span>}
             </span>
             <span className={`btn shrink-0 py-1.5 ${files[d.key] || docs[d.key] ? "text-green-700" : ""}`}>
-              {files[d.key] || docs[d.key] ? "✓ Change" : "Add photo"}
+              {files[d.key] || docs[d.key] ? t("✓ Change") : t("Add photo")}
             </span>
             <input
               type="file"
@@ -144,17 +146,17 @@ export default function DriverSignup({
         ))}
       </fieldset>
       <div className="space-y-2 rounded-xl bg-green-50 p-3 text-sm">
-        <p className="font-medium text-green-900">Easier on WhatsApp?</p>
+        <p className="font-medium text-green-900">{t("Easier on WhatsApp?")}</p>
         <a className="btn w-full border-green-600 text-green-800" href={docsWhatsAppUrl(form.full_name, phone)} target="_blank" rel="noreferrer">
-          Send documents to {DOCS_WHATSAPP} on WhatsApp
+          {t("Send documents to {n} on WhatsApp", { n: DOCS_WHATSAPP })}
         </a>
         <label className="flex items-center gap-2 text-green-900">
-          <input type="checkbox" checked={viaWhatsApp} onChange={(e) => setViaWhatsApp(e.target.checked)} />I&apos;ll send my documents on WhatsApp instead of uploading
+          <input type="checkbox" checked={viaWhatsApp} onChange={(e) => setViaWhatsApp(e.target.checked)} />{t("I'll send my documents on WhatsApp instead of uploading")}
         </label>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button className="btn btn-primary w-full py-3" disabled={busy}>
-        {busy ? "Uploading…" : "Submit for approval"}
+        {busy ? t("Uploading…") : t("Submit for approval")}
       </button>
     </form>
   );
