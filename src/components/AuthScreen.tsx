@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import LanguagePicker from "@/i18n/LanguagePicker";
 import { useT } from "@/i18n";
 import { TAGLINE } from "@/lib/brand";
@@ -27,7 +28,9 @@ export default function AuthScreen({
       <div className="rounded-3xl bg-stone-50 p-5">
         <PhoneLogin />
       </div>
-      <p className="mt-4 text-center text-xs text-stone-500">{t("By continuing you agree to use Pikop for lawful deliveries only.")}</p>
+      <p className="mt-4 text-center text-xs text-stone-500">{t("By continuing you agree to use Pikop for lawful deliveries only.")}{" "}
+        <Link href="/terms" className="underline">{t("Terms")}</Link> · <Link href="/privacy" className="underline">{t("Privacy policy")}</Link>
+      </p>
     </div>
   );
 }

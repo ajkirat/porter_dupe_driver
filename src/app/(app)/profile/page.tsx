@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import LanguagePicker from "@/i18n/LanguagePicker";
 import { useT } from "@/i18n";
@@ -91,7 +92,9 @@ export default function Profile() {
       </div>
 
       <SignOut />
-      <p className="text-center text-xs text-stone-400">Pikop Driver</p>
+      <p className="text-center text-xs text-stone-400">
+        Pikop Driver · <Link href="/terms" className="underline">{t("Terms")}</Link> · <Link href="/privacy" className="underline">{t("Privacy policy")}</Link>
+      </p>
     </div>
   );
 }
