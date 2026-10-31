@@ -5,6 +5,7 @@ import { useT } from "@/i18n";
 import { unlockAlert } from "@/lib/alert";
 import { haversineM, type LatLng } from "@/lib/geo";
 import { isNative, startBackgroundLocation } from "@/lib/native";
+import { registerForPush } from "@/lib/push";
 import { errorText, supabase } from "@/lib/supabase";
 import type { Driver, DriverPass, Job } from "@/lib/types";
 
@@ -124,6 +125,11 @@ export function DriverProvider({
       void supabase().rpc("driver_set_location", { p_lat: p.lat, p_lng: p.lng });
     }
   }, []);
+
+  // Android app only: sign this phone up for new-request alerts once the driver is online.
+  useEffect(() => {
+    if (isNative() && online) registerForPush().catch(() => {});
+  }, [online]);
 
   // Android app only: keep reporting with the screen locked, using a foreground service and its notification.
   useEffect(() => {

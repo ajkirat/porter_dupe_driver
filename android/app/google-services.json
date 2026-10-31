@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "220186563651",
+    "project_id": "pikop-4a464",
+    "storage_bucket": "pikop-4a464.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220186563651:android:c0786ef7aa0f053b83f0f6",
+        "android_client_info": {
+          "package_name": "app.pikop.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmeB_up4bDKQDNxhwa2BpzRI11DNfSq8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
