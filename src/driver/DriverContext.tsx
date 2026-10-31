@@ -3,12 +3,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useT } from "@/i18n";
 import { unlockAlert } from "@/lib/alert";
-import type { LatLng } from "@/lib/geo";
+import { haversineM, type LatLng } from "@/lib/geo";
 import { isNative, startBackgroundLocation } from "@/lib/native";
 import { errorText, supabase } from "@/lib/supabase";
 import type { Driver, DriverPass, Job } from "@/lib/types";
 
 const PUSH_IDLE_MS = 15000;
+const STILL_PUSH_MS = 60000;
 const PUSH_TRIP_MS = 4000; // fast enough that customers see the bike move
 
 type Prices = { daily_pass_price: number; weekly_pass_price: number };
@@ -111,9 +112,15 @@ export function DriverProvider({
     sharingRef.current = sharing;
   }, [sharing]);
   // Sends the position to the server, at most every few seconds (faster during a trip).
+  const lastSent = useRef<LatLng | null>(null);
   const push = useCallback((p: LatLng) => {
-    if (sharingRef.current && Date.now() - lastPush.current > pushEvery.current) {
+    if (!sharingRef.current) return;
+    const since = Date.now() - lastPush.current;
+    // Standing still: report only about once a minute instead of every few seconds, to save battery and database writes.
+    const still = lastSent.current !== null && haversineM(lastSent.current, p) < 15;
+    if (since > (still ? STILL_PUSH_MS : pushEvery.current)) {
       lastPush.current = Date.now();
+      lastSent.current = p;
       void supabase().rpc("driver_set_location", { p_lat: p.lat, p_lng: p.lng });
     }
   }, []);
