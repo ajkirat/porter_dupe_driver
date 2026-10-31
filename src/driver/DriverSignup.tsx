@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
+import { uploadSelfie } from "@/lib/selfie";
 import { errorText, supabase } from "@/lib/supabase";
 import { KYC_DOCS, type Driver } from "@/lib/types";
 
@@ -27,18 +28,21 @@ export default function DriverSignup({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [viaWhatsApp, setViaWhatsApp] = useState(false);
+  const [selfie, setSelfie] = useState<File | null>(null);
 
   const docs = existing?.kyc_docs ?? {};
   const missing = KYC_DOCS.filter((d) => !files[d.key] && !docs[d.key]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!selfie && !docs.selfie) return setError("Please take a selfie. It is required.");
     if (missing.length && !viaWhatsApp) return setError(`Please add: ${missing.map((d) => d.label).join(", ")}`);
     setBusy(true);
     setError("");
     try {
       const sb = supabase();
       const uploaded: Record<string, string> = { ...docs };
+      if (selfie) uploaded.selfie = await uploadSelfie(userId, selfie, "signup");
       for (const [key, file] of Object.entries(files)) {
         const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
         const path = `${userId}/${key}-${Date.now()}.${ext}`;
@@ -106,6 +110,14 @@ export default function DriverSignup({
       <label className="label">
         Your UPI ID (customers pay you here)
         <input className="input" placeholder="name@okaxis" {...field("upi_id")} />
+      </label>
+      <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border-2 border-brand p-3 text-sm">
+        <span>
+          <b>Selfie (required)</b>
+          <span className="block text-xs text-stone-500">{selfie ? selfie.name : docs.selfie ? "Taken. Tap to retake." : "Take a clear photo of your face"}</span>
+        </span>
+        <span className={`btn shrink-0 py-1.5 ${selfie || docs.selfie ? "text-green-700" : ""}`}>{selfie || docs.selfie ? "✓ Retake" : "Open camera"}</span>
+        <input type="file" accept="image/*" capture="user" className="sr-only" onChange={(e) => setSelfie(e.target.files?.[0] ?? selfie)} />
       </label>
       <fieldset className="space-y-2">
         <legend className="label mb-1">Documents</legend>

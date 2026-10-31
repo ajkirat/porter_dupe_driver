@@ -22,7 +22,7 @@ type Ctx = {
   current: Job | undefined;
   error: string;
   clearError: () => void;
-  setOnline: (online: boolean) => Promise<void>;
+  setOnline: (online: boolean, selfiePath?: string) => Promise<boolean>;
   act: (fn: string, args: Record<string, unknown>) => Promise<boolean>;
   refresh: () => void;
   reload: () => void;
@@ -167,9 +167,9 @@ export function DriverProvider({
   );
 
   const setOnline = useCallback(
-    async (next: boolean) => {
+    async (next: boolean, selfiePath?: string) => {
       if (next) unlockAlert(); // browsers only allow sound after a tap
-      await act("driver_set_online", { p_online: next });
+      return act("driver_set_online", { p_online: next, p_selfie: selfiePath ?? null });
     },
     [act],
   );

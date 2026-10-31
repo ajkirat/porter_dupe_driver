@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Map from "@/components/Map";
 import ActiveTrip from "@/driver/ActiveTrip";
 import { useDriver } from "@/driver/DriverContext";
@@ -8,11 +8,31 @@ import JobCard from "@/driver/JobCard";
 import OfferModal from "@/driver/OfferModal";
 import { useDelivered } from "@/driver/useDelivered";
 import { summarize, timeLeft } from "@/lib/earnings";
+import { uploadSelfie } from "@/lib/selfie";
+import { errorText } from "@/lib/supabase";
 
 function OnlineCard() {
   const { driver, pass, setOnline, error, locationError, clearError } = useDriver();
   const [busy, setBusy] = useState(false);
+  const [selfieError, setSelfieError] = useState("");
+  const camera = useRef<HTMLInputElement>(null);
   const online = driver.is_online;
+
+  // Going online needs a fresh selfie every time: open the front camera, upload it, then switch on.
+  async function onSelfie(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    try {
+      const path = await uploadSelfie(driver.id, file, "online");
+      await setOnline(true, path);
+    } catch (err) {
+      setSelfieError(errorText(err));
+    }
+    setBusy(false);
+  }
+
   return (
     <div className={`m-4 rounded-3xl p-5 text-white ${online ? "bg-green-600" : "bg-stone-900"}`}>
       <div className="flex items-center justify-between gap-3">
@@ -28,8 +48,10 @@ function OnlineCard() {
           disabled={busy || (!pass && !online)}
           onClick={async () => {
             clearError();
+            setSelfieError("");
+            if (!online) return camera.current?.click();
             setBusy(true);
-            await setOnline(!online);
+            await setOnline(false);
             setBusy(false);
           }}
           className={`relative h-12 w-24 shrink-0 rounded-full transition disabled:opacity-40 ${online ? "bg-white/30" : "bg-white/20"}`}
@@ -37,6 +59,9 @@ function OnlineCard() {
           <span className={`absolute top-1 h-10 w-10 rounded-full bg-white shadow transition-all ${online ? "left-[3.2rem]" : "left-1"}`} />
         </button>
       </div>
+      <input ref={camera} type="file" accept="image/*" capture="user" className="sr-only" onChange={onSelfie} />
+      {!online && pass && <p className="mt-3 text-xs opacity-80">You&apos;ll take a quick selfie each time you go online.</p>}
+      {selfieError && <p className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-red-700">{selfieError}</p>}
       {!pass && !online && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm">No active pass. Open the Pass tab to see how to buy one.</p>}
       {error && <p className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-red-700">{error}</p>}
       {locationError && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm">{locationError}</p>}
