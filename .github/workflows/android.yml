@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android
 
 on:
   push:
@@ -6,8 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  apk:
+  build:
     runs-on: ubuntu-latest
+    env:
+      HAS_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,10 +22,29 @@ jobs:
           java-version: 21
       - run: npm ci
       - run: npx cap sync android
-      - name: Build debug APK
+
+      - name: Decode signing key
+        if: env.HAS_KEY == 'true'
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+          echo "KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
+
+      # Without the signing secrets you still get a test APK you can install on your own phone.
+      - name: Build test APK (debug)
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -PversionCode=${{ github.run_number }}
       - uses: actions/upload-artifact@v4
         with:
-          name: pikop-driver-debug-apk
+          name: pikop-driver-test-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Build Play Store bundle (release)
+        if: env.HAS_KEY == 'true'
+        working-directory: android
+        run: ./gradlew bundleRelease -PversionCode=${{ github.run_number }}
+      - uses: actions/upload-artifact@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          name: pikop-driver-play-bundle
+          path: android/app/build/outputs/bundle/release/app-release.aab
