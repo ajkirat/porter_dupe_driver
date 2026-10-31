@@ -23,7 +23,6 @@ export default function DriverSignup({
   const [form, setForm] = useState({
     full_name: existing?.full_name ?? "",
     vehicle_number: existing?.vehicle_number ?? "",
-    licence_number: existing?.licence_number ?? "",
     upi_id: existing?.upi_id ?? "",
   });
   const [files, setFiles] = useState<Record<string, File>>({});
@@ -57,7 +56,7 @@ export default function DriverSignup({
         const { error } = await sb.rpc("driver_update_profile", {
           p_full_name: form.full_name,
           p_vehicle_number: vehicle_number,
-          p_licence_number: form.licence_number,
+          p_licence_number: existing?.licence_number ?? "",
           p_upi_id: form.upi_id || null,
           p_kyc_docs: uploaded,
         });
@@ -68,7 +67,7 @@ export default function DriverSignup({
           phone,
           full_name: form.full_name,
           vehicle_number,
-          licence_number: form.licence_number,
+          licence_number: "", // no longer asked; the column is required in the database
           upi_id: form.upi_id || null,
           kyc_docs: uploaded,
         });
@@ -99,16 +98,10 @@ export default function DriverSignup({
         {t("Full name (as on licence)")}
         <input className="input" required {...field("full_name")} />
       </label>
-      <div className="grid grid-cols-2 gap-3">
-        <label className="label">
-          {t("Bike number")}
-          <input className="input uppercase" placeholder="KA01AB1234" required {...field("vehicle_number")} />
-        </label>
-        <label className="label">
-          {t("Licence number")}
-          <input className="input" required {...field("licence_number")} />
-        </label>
-      </div>
+      <label className="label">
+        {t("Bike number")}
+        <input className="input uppercase" placeholder="KA01AB1234" required {...field("vehicle_number")} />
+      </label>
       <label className="label">
         {t("Your UPI ID (customers pay you here)")}
         <input className="input" placeholder="name@okaxis" {...field("upi_id")} />

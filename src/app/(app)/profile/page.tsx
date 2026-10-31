@@ -48,7 +48,6 @@ export default function Profile() {
         {row(t("Name"), driver.full_name)}
         {row(t("Phone"), driver.phone)}
         {row(t("Bike"), driver.vehicle_number)}
-        {row(t("Licence"), driver.licence_number)}
         {row("UPI", driver.upi_id ?? "")}
         <div className="pt-3">
           <button className="btn w-full" onClick={() => setEditing(true)}>
