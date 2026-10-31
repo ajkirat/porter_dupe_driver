@@ -9,6 +9,7 @@ import OfferModal from "@/driver/OfferModal";
 import { useDelivered } from "@/driver/useDelivered";
 import { summarize, timeLeft } from "@/lib/earnings";
 import { useT } from "@/i18n";
+import { acceptLocationDisclosure, isNative, locationDisclosureAccepted } from "@/lib/native";
 import { uploadSelfie } from "@/lib/selfie";
 import { errorText } from "@/lib/supabase";
 
@@ -17,6 +18,7 @@ function OnlineCard() {
   const { t } = useT();
   const [busy, setBusy] = useState(false);
   const [selfieError, setSelfieError] = useState("");
+  const [disclosure, setDisclosure] = useState(false);
   const camera = useRef<HTMLInputElement>(null);
   const online = driver.is_online;
 
@@ -51,7 +53,11 @@ function OnlineCard() {
           onClick={async () => {
             clearError();
             setSelfieError("");
-            if (!online) return camera.current?.click();
+            if (!online) {
+              // Google Play: explain background location and get a clear yes before it is ever requested.
+              if (isNative() && !locationDisclosureAccepted()) return setDisclosure(true);
+              return camera.current?.click();
+            }
             setBusy(true);
             await setOnline(false);
             setBusy(false);
@@ -61,6 +67,31 @@ function OnlineCard() {
           <span className={`absolute top-1 h-10 w-10 rounded-full bg-white shadow transition-all ${online ? "left-[3.2rem]" : "left-1"}`} />
         </button>
       </div>
+      {disclosure && (
+        <div className="fixed inset-0 z-50 flex items-end bg-black/60" role="dialog" aria-modal aria-label={t("Location access")}>
+          <div className="w-full space-y-3 rounded-t-3xl bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-stone-900">
+            <h2 className="text-lg font-bold">{t("Location access")}</h2>
+            <p className="text-sm text-stone-700">
+              {t("Pikop Driver collects your location while you are online or on a trip, even when the app is closed or not on screen. It is used to show customers where their parcel is and to find jobs near you. It is not collected while you are offline.")}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button className="btn" onClick={() => setDisclosure(false)}>
+                {t("Not now")}
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  acceptLocationDisclosure();
+                  setDisclosure(false);
+                  camera.current?.click();
+                }}
+              >
+                {t("I agree")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <input ref={camera} type="file" accept="image/*" capture="user" className="sr-only" onChange={onSelfie} />
       {!online && pass && <p className="mt-3 text-xs opacity-80">{t("You'll take a quick selfie each time you go online.")}</p>}
       {selfieError && <p className="mt-3 rounded-xl bg-white px-3 py-2 text-sm text-red-700">{selfieError}</p>}

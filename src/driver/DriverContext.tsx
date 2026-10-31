@@ -1,8 +1,10 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useT } from "@/i18n";
 import { unlockAlert } from "@/lib/alert";
 import type { LatLng } from "@/lib/geo";
+import { isNative, startBackgroundLocation } from "@/lib/native";
 import { errorText, supabase } from "@/lib/supabase";
 import type { Driver, DriverPass, Job } from "@/lib/types";
 
@@ -72,6 +74,11 @@ export function DriverProvider({
   reload: () => void;
   children: ReactNode;
 }) {
+  const { t } = useT();
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
   const [me, setMe] = useState<LatLng | null>(null);
   const [locationError, setLocationError] = useState("");
   const [myJobs, setMyJobs] = useState<Job[]>([]);
@@ -103,6 +110,34 @@ export function DriverProvider({
   useEffect(() => {
     sharingRef.current = sharing;
   }, [sharing]);
+  // Sends the position to the server, at most every few seconds (faster during a trip).
+  const push = useCallback((p: LatLng) => {
+    if (sharingRef.current && Date.now() - lastPush.current > pushEvery.current) {
+      lastPush.current = Date.now();
+      void supabase().rpc("driver_set_location", { p_lat: p.lat, p_lng: p.lng });
+    }
+  }, []);
+
+  // Android app only: keep reporting with the screen locked, using a foreground service and its notification.
+  useEffect(() => {
+    if (!isNative() || !sharing) return;
+    let stop: (() => void) | undefined;
+    let cancelled = false;
+    startBackgroundLocation(
+      (p) => {
+        setMe(p);
+        push(p);
+      },
+      { title: tRef.current("Pikop Driver is online"), message: tRef.current("Sharing your location so customers can follow their parcel.") },
+    )
+      .then((s) => (cancelled ? s() : (stop = s)))
+      .catch(() => setLocationError("Location is off. Turn it on so customers can see you and you can get nearby jobs."));
+    return () => {
+      cancelled = true;
+      stop?.();
+    };
+  }, [sharing, push]);
+
   useEffect(() => {
     if (!navigator.geolocation) return;
     const watch = navigator.geolocation.watchPosition(
@@ -110,16 +145,14 @@ export function DriverProvider({
         const p = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setMe(p);
         setLocationError("");
-        if (sharingRef.current && Date.now() - lastPush.current > pushEvery.current) {
-          lastPush.current = Date.now();
-          void supabase().rpc("driver_set_location", { p_lat: p.lat, p_lng: p.lng });
-        }
+        // In the Android app the background watcher above does the reporting instead.
+        if (!isNative()) push(p);
       },
       () => setLocationError("Location is off. Turn it on so customers can see you and you can get nearby jobs."),
       { enableHighAccuracy: true, maximumAge: 10000 },
     );
     return () => navigator.geolocation.clearWatch(watch);
-  }, []);
+  }, [push]);
 
   const refresh = useCallback(async () => {
     const sb = supabase();

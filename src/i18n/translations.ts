@@ -1,6 +1,13 @@
 // English text is the key. Hindi (hi) and Kannada (kn) translations. Placeholders like {name} must be kept.
 // Please have a native speaker review these before launch.
 export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
+  // Location (Android app)
+  "Pikop Driver is online": { hi: "Pikop Driver ऑनलाइन है", kn: "Pikop Driver ಆನ್‌ಲೈನ್ ಇದೆ" },
+  "Sharing your location so customers can follow their parcel.": { hi: "आपकी लोकेशन साझा हो रही है ताकि ग्राहक अपना पार्सल देख सकें।", kn: "ಗ್ರಾಹಕರು ತಮ್ಮ ಪಾರ್ಸೆಲ್ ಅನುಸರಿಸಲು ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಹಂಚಲಾಗುತ್ತಿದೆ." },
+  "Location access": { hi: "लोकेशन की अनुमति", kn: "ಸ್ಥಳದ ಪ್ರವೇಶ" },
+  "Pikop Driver collects your location while you are online or on a trip, even when the app is closed or not on screen. It is used to show customers where their parcel is and to find jobs near you. It is not collected while you are offline.": { hi: "जब आप ऑनलाइन हों या ट्रिप पर हों, तब Pikop Driver आपकी लोकेशन लेता है, भले ही ऐप बंद हो या स्क्रीन पर न हो। इसका उपयोग ग्राहकों को उनका पार्सल दिखाने और आपके पास के काम ढूंढने के लिए होता है। ऑफ़लाइन रहने पर लोकेशन नहीं ली जाती।", kn: "ನೀವು ಆನ್‌ಲೈನ್ ಇದ್ದಾಗ ಅಥವಾ ಟ್ರಿಪ್‌ನಲ್ಲಿದ್ದಾಗ, ಆ್ಯಪ್ ಮುಚ್ಚಿದ್ದರೂ ಅಥವಾ ಪರದೆಯಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೂ Pikop Driver ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಸಂಗ್ರಹಿಸುತ್ತದೆ. ಗ್ರಾಹಕರಿಗೆ ಅವರ ಪಾರ್ಸೆಲ್ ಎಲ್ಲಿದೆ ಎಂದು ತೋರಿಸಲು ಮತ್ತು ನಿಮ್ಮ ಹತ್ತಿರದ ಕೆಲಸ ಹುಡುಕಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ನೀವು ಆಫ್‌ಲೈನ್ ಇದ್ದಾಗ ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ." },
+  "Not now": { hi: "अभी नहीं", kn: "ಈಗ ಬೇಡ" },
+  "I agree": { hi: "मैं सहमत हूं", kn: "ನಾನು ಒಪ್ಪುತ್ತೇನೆ" },
   // Login
   "Mobile number": { hi: "मोबाइल नंबर", kn: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ" },
   "Sending…": { hi: "भेज रहे हैं…", kn: "ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ…" },
