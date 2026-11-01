@@ -75,6 +75,7 @@ export type Job = {
   wallet_discount?: number;
   payment_mode: "cash" | "upi_to_driver";
   pay_at: "pickup" | "drop";
+  paid_via?: "cash" | "upi" | "qr" | null;
   tracking_token: string;
   cancel_reason: string | null;
   created_at: string;

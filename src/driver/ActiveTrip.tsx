@@ -6,7 +6,7 @@ import { PhoneIcon } from "@/components/icons";
 import { useT } from "@/i18n";
 import { navigationUrl } from "@/lib/geo";
 import { formatKm } from "@/lib/fare";
-import { PAY_AT_LABEL } from "@/lib/types";
+import PayQr from "./PayQr";
 import { useDriver } from "./DriverContext";
 
 const CANCEL_REASONS = ["Customer not reachable", "Vehicle problem", "Too far from me", "Item not allowed", "Other"];
@@ -27,7 +27,6 @@ export default function ActiveTrip() {
   const contact = pickupLeg
     ? { name: job.pickup_contact_name || t("sender"), phone: job.pickup_contact_phone }
     : { name: job.receiver_name || t("receiver"), phone: job.receiver_phone };
-  const collectNow = (pickupLeg && job.pay_at === "pickup") || (!pickupLeg && job.pay_at === "drop");
   const showOtp = !pickupLeg || arrived;
 
   async function run(fn: string, args: Record<string, unknown>) {
@@ -73,18 +72,18 @@ export default function ActiveTrip() {
         </div>
       </div>
 
-      {collectNow && (
-        <div className="rounded-2xl bg-green-600 p-4 text-white">
-          <p className="text-sm opacity-90">{t("Collect {when} by {mode}", { when: t(PAY_AT_LABEL[job.pay_at]), mode: job.payment_mode === "cash" ? t("cash") : "UPI" })}</p>
-          <p className="text-3xl font-extrabold">₹{job.fare_rupees - (job.wallet_discount ?? 0)}</p>
-          {!!job.wallet_discount && <p className="mt-1 text-xs opacity-90">{t("Customer used ₹{n} credit. We add ₹{n} to your wallet after delivery.", { n: job.wallet_discount })}</p>}
-        </div>
-      )}
-      {!collectNow && (
-        <p className="rounded-xl bg-stone-100 px-3 py-2 text-sm text-stone-700">
-          {t("₹{fare} is collected {when} · {km} trip", { fare: job.fare_rupees - (job.wallet_discount ?? 0), when: t(PAY_AT_LABEL[job.pay_at]), km: formatKm(job.distance_m) })}
-        </p>
-      )}
+      <div className="rounded-2xl bg-green-600 p-4 text-white">
+        <p className="text-sm opacity-90">{t("Cash, UPI or QR. Your earnings do not depend on how they pay.")}</p>
+        <p className="text-3xl font-extrabold">₹{job.fare_rupees - (job.wallet_discount ?? 0)}</p>
+        <p className="text-xs opacity-90">{t("{km} trip", { km: formatKm(job.distance_m) })}</p>
+        {job.paid_via && (
+          <p className="mt-2 rounded-lg bg-white/20 px-2 py-1 text-sm font-medium">
+            {t("Customer says they paid by {mode}", { mode: job.paid_via === "cash" ? t("cash") : job.paid_via === "upi" ? t("UPI") : t("QR") })}
+          </p>
+        )}
+        {!!job.wallet_discount && <p className="mt-1 text-xs opacity-90">{t("Customer used ₹{n} credit. We add ₹{n} to your wallet after delivery.", { n: job.wallet_discount })}</p>}
+        <PayQr rupees={job.fare_rupees - (job.wallet_discount ?? 0)} />
+      </div>
 
       {pickupLeg && !arrived && (
         <button className="btn btn-primary w-full py-3 text-base" disabled={busy} onClick={() => run("mark_arrived", { p_job: job.id })}>
