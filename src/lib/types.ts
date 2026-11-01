@@ -35,9 +35,20 @@ export type DriverPass = {
   starts_at: string;
   ends_at: string;
   amount_rupees: number;
+  wallet_rupees?: number;
   note: string | null;
   created_at: string;
 };
+
+export type WalletEntry = {
+  id: string;
+  amount_rupees: number;
+  kind: string;
+  note: string | null;
+  created_at: string;
+};
+
+export type ReferralItem = { who: string; status: "pending" | "rewarded" | "capped"; reward: number | null; created_at: string };
 
 export type Job = {
   id: string;
@@ -59,6 +70,7 @@ export type Job = {
   distance_m: number;
   duration_s: number | null;
   fare_rupees: number;
+  wallet_discount?: number;
   payment_mode: "cash" | "upi_to_driver";
   pay_at: "pickup" | "drop";
   tracking_token: string;

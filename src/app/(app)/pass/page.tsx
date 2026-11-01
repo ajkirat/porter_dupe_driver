@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useT } from "@/i18n";
 import { useDriver } from "@/driver/DriverContext";
@@ -15,6 +16,7 @@ export default function PassPage() {
   const { t, locale } = useT();
   const [now] = useState(() => new Date());
   const [history, setHistory] = useState<DriverPass[]>([]);
+  const [wallet, setWallet] = useState<number | null>(null);
 
   useEffect(() => {
     supabase()
@@ -24,6 +26,9 @@ export default function PassPage() {
       .order("ends_at", { ascending: false })
       .limit(20)
       .then(({ data }) => setHistory(data ?? []));
+    supabase()
+      .rpc("my_wallet", { p_wallet: "driver" })
+      .then(({ data }) => setWallet(typeof data === "number" ? data : null));
   }, [driver.id]);
 
   const wa = SUPPORT ? `https://wa.me/${SUPPORT.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi, I paid for a Pikop pass. Driver: ${driver.full_name}, ${driver.phone}`)}` : null;
@@ -45,6 +50,14 @@ export default function PassPage() {
           </>
         )}
       </div>
+
+      <Link href="/wallet" className="card flex items-center justify-between gap-3">
+        <span>
+          <span className="block font-semibold">{t("Wallet")}</span>
+          <span className="block text-xs text-stone-500">{t("Refer a driver, earn ₹ credit, and use it on your pass.")}</span>
+        </span>
+        <span className="text-xl font-extrabold text-brand">₹{wallet ?? 0}</span>
+      </Link>
 
       <div className="card space-y-3">
         <h2 className="font-semibold">{t("How to buy or renew")}</h2>
@@ -81,7 +94,10 @@ export default function PassPage() {
                 {t("{a} to {b}", { a: new Date(p.starts_at).toLocaleDateString(locale, { dateStyle: "medium" }), b: new Date(p.ends_at).toLocaleDateString(locale, { dateStyle: "medium" }) })}
               </p>
             </div>
-            <span className="font-semibold">₹{p.amount_rupees}</span>
+            <span className="text-right font-semibold">
+              ₹{p.amount_rupees}
+              {!!p.wallet_rupees && <span className="block text-xs font-normal text-stone-500">{t("₹{n} from wallet", { n: p.wallet_rupees })}</span>}
+            </span>
           </div>
         ))}
       </div>

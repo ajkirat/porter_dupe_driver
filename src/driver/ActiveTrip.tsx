@@ -76,12 +76,13 @@ export default function ActiveTrip() {
       {collectNow && (
         <div className="rounded-2xl bg-green-600 p-4 text-white">
           <p className="text-sm opacity-90">{t("Collect {when} by {mode}", { when: t(PAY_AT_LABEL[job.pay_at]), mode: job.payment_mode === "cash" ? t("cash") : "UPI" })}</p>
-          <p className="text-3xl font-extrabold">₹{job.fare_rupees}</p>
+          <p className="text-3xl font-extrabold">₹{job.fare_rupees - (job.wallet_discount ?? 0)}</p>
+          {!!job.wallet_discount && <p className="mt-1 text-xs opacity-90">{t("Customer used ₹{n} credit. We add ₹{n} to your wallet after delivery.", { n: job.wallet_discount })}</p>}
         </div>
       )}
       {!collectNow && (
         <p className="rounded-xl bg-stone-100 px-3 py-2 text-sm text-stone-700">
-          {t("₹{fare} is collected {when} · {km} trip", { fare: job.fare_rupees, when: t(PAY_AT_LABEL[job.pay_at]), km: formatKm(job.distance_m) })}
+          {t("₹{fare} is collected {when} · {km} trip", { fare: job.fare_rupees - (job.wallet_discount ?? 0), when: t(PAY_AT_LABEL[job.pay_at]), km: formatKm(job.distance_m) })}
         </p>
       )}
 

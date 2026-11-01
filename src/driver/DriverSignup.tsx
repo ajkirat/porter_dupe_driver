@@ -30,6 +30,7 @@ export default function DriverSignup({
   const [error, setError] = useState("");
   const [viaWhatsApp, setViaWhatsApp] = useState(false);
   const [selfie, setSelfie] = useState<File | null>(null);
+  const [referral, setReferral] = useState("");
 
   const docs = existing?.kyc_docs ?? {};
   const missing = KYC_DOCS.filter((d) => !files[d.key] && !docs[d.key]);
@@ -72,6 +73,8 @@ export default function DriverSignup({
           kyc_docs: uploaded,
         });
         if (error) throw error;
+        // A referral code is optional and must never block signing up. It can also be added later in Wallet.
+        if (referral.trim()) await sb.rpc("apply_referral_code", { p_code: referral.trim(), p_wallet: "driver" });
       }
       onDone();
     } catch (e) {
@@ -106,6 +109,12 @@ export default function DriverSignup({
         {t("Your UPI ID (customers pay you here)")}
         <input className="input" placeholder="name@okaxis" {...field("upi_id")} />
       </label>
+      {!existing && (
+        <label className="label">
+          {t("Referral code (optional)")}
+          <input className="input uppercase" placeholder="ABC123" maxLength={8} value={referral} onChange={(e) => setReferral(e.target.value)} />
+        </label>
+      )}
       <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border-2 border-brand p-3 text-sm">
         <span>
           <b>{t("Selfie (required)")}</b>
