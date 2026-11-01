@@ -1,5 +1,6 @@
 "use client";
 
+import VehicleDiagram from "@/components/VehicleDiagram";
 import { useVehicles } from "./useVehicles";
 import { sizeCm, sizeFeet } from "@/lib/vehicles";
 import { useState } from "react";
@@ -120,6 +121,7 @@ export default function DriverSignup({
               <span className="block font-semibold">{v.name}</span>
               <span className="block text-xs text-stone-600">{t("Up to {kg} kg", { kg: v.max_kg })} · {sizeFeet(v)}</span>
               <span className="block text-xs text-stone-400">{sizeCm(v)}</span>
+              {form.vehicle_type === v.code && <VehicleDiagram v={v} className="mt-2" />}
             </button>
           ))}
         </div>
