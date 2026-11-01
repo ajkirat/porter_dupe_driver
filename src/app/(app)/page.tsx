@@ -6,6 +6,7 @@ import ActiveTrip from "@/driver/ActiveTrip";
 import { useDriver } from "@/driver/DriverContext";
 import JobCard from "@/driver/JobCard";
 import OfferModal from "@/driver/OfferModal";
+import JustDelivered from "@/driver/JustDelivered";
 import ReferBanner from "@/driver/ReferBanner";
 import { useDelivered } from "@/driver/useDelivered";
 import { summarize, timeLeft } from "@/lib/earnings";
@@ -158,6 +159,7 @@ export default function Home() {
   const list = [...offers, ...openJobs];
   return (
     <div className="pb-4">
+      <JustDelivered />
       <OnlineCard />
       <TodayStrip />
       <PassWarning />
