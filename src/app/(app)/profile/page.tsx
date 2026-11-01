@@ -50,6 +50,7 @@ export default function Profile() {
         <ReferBanner />
       </div>
       <div className="card divide-y divide-stone-100 py-2">
+        {row(t("Driver ID"), driver.driver_code ?? "")}
         {row(t("Name"), driver.full_name)}
         {row(t("Phone"), driver.phone)}
         {row(t("Bike"), driver.vehicle_number)}

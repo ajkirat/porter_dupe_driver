@@ -208,4 +208,5 @@ export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
   "Refer a driver, earn ₹{n}": { hi: "किसी ड्राइवर को जोड़ें, ₹{n} कमाएं", kn: "ಚಾಲಕರನ್ನು ಸೇರಿಸಿ, ₹{n} ಗಳಿಸಿ" },
   "You get ₹{n} in your wallet when they finish their first delivery. Use it to pay for your pass.": { hi: "जब वे अपनी पहली डिलीवरी पूरी करेंगे तो आपके वॉलेट में ₹{n} आएंगे। इससे अपना पास भरें।", kn: "ಅವರು ಮೊದಲ ಡೆಲಿವರಿ ಪೂರ್ಣಗೊಳಿಸಿದಾಗ ನಿಮ್ಮ ವ್ಯಾಲೆಟ್‌ಗೆ ₹{n} ಬರುತ್ತದೆ. ಅದರಿಂದ ನಿಮ್ಮ ಪಾಸ್‌ಗೆ ಪಾವತಿಸಿ." },
   "My wallet": { hi: "मेरा वॉलेट", kn: "ನನ್ನ ವ್ಯಾಲೆಟ್" },
+  "Driver ID": { hi: "ड्राइवर आईडी", kn: "ಚಾಲಕ ಐಡಿ" },
 };
