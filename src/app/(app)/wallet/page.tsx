@@ -19,19 +19,23 @@ export default function WalletPage() {
   const [apply, setApply] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [expiring, setExpiring] = useState<{ amount: number; expires_at: string } | null>(null);
+  const [autoRenew, setAutoRenew] = useState(driver.auto_renew_pass !== false);
 
   const load = useCallback(async () => {
     const sb = supabase();
-    const [b, c, e, r] = await Promise.all([
+    const [b, c, e, r, x] = await Promise.all([
       sb.rpc("my_wallet", { p_wallet: "driver" }),
       sb.rpc("my_referral_code"),
       sb.from("wallet_entries").select("id, amount_rupees, kind, note, created_at").eq("wallet", "driver").order("created_at", { ascending: false }).limit(30),
       sb.rpc("my_referrals", { p_wallet: "driver" }),
+      sb.rpc("my_wallet_expiring", { p_wallet: "driver" }),
     ]);
     setBalance(typeof b.data === "number" ? b.data : 0);
     setCode(typeof c.data === "string" ? c.data : "");
     setEntries((e.data as WalletEntry[]) ?? []);
     setReferrals((r.data as ReferralItem[]) ?? []);
+    setExpiring(((x.data as { amount: number; expires_at: string }[] | null) ?? [])[0] ?? null);
   }, []);
 
   useEffect(() => {
@@ -50,6 +54,15 @@ export default function WalletPage() {
       await load();
     }
     setBusy(false);
+  }
+
+  async function toggleAutoRenew(on: boolean) {
+    setAutoRenew(on);
+    const { error } = await supabase().rpc("driver_set_auto_renew", { p_on: on });
+    if (error) {
+      setAutoRenew(!on);
+      setMsg({ ok: false, text: errorText(error) });
+    }
   }
 
   async function applyCode(e: React.FormEvent) {
@@ -95,6 +108,11 @@ export default function WalletPage() {
         <p className="text-sm opacity-80">{t("Wallet balance")}</p>
         <p className="text-4xl font-extrabold">₹{bal}</p>
         <p className="mt-1 text-xs opacity-80">{t("Use it to pay for your daily or weekly pass.")}</p>
+        {expiring && (
+          <p className="mt-2 rounded-lg bg-amber-400/20 px-2 py-1 text-xs text-amber-200">
+            {t("₹{n} expires on {date}", { n: expiring.amount, date: new Date(expiring.expires_at).toLocaleDateString(locale, { dateStyle: "medium" }) })}
+          </p>
+        )}
       </div>
 
       {msg && <p className={`rounded-xl px-3 py-2 text-sm ${msg.ok ? "bg-green-100 text-green-900" : "bg-red-50 text-red-700"}`}>{msg.text}</p>}
@@ -120,6 +138,14 @@ export default function WalletPage() {
           </>
         )}
       </div>
+
+      <label className="card flex items-center justify-between gap-3">
+        <span>
+          <span className="block font-semibold">{t("Renew my pass automatically")}</span>
+          <span className="block text-xs text-stone-500">{t("When your pass ends, the same pass is bought from your wallet if there is enough credit.")}</span>
+        </span>
+        <input type="checkbox" className="h-5 w-5" checked={autoRenew} onChange={(e) => void toggleAutoRenew(e.target.checked)} />
+      </label>
 
       <div className="card space-y-3">
         <h2 className="font-semibold">{t("Refer a driver")}</h2>

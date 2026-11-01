@@ -11,6 +11,7 @@ export type Profile = {
 export type Driver = {
   id: string;
   driver_code?: string;
+  auto_renew_pass?: boolean;
   full_name: string;
   phone: string;
   vehicle_type: string;

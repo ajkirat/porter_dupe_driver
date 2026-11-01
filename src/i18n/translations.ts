@@ -209,4 +209,9 @@ export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
   "You get ₹{n} in your wallet when they finish their first delivery. Use it to pay for your pass.": { hi: "जब वे अपनी पहली डिलीवरी पूरी करेंगे तो आपके वॉलेट में ₹{n} आएंगे। इससे अपना पास भरें।", kn: "ಅವರು ಮೊದಲ ಡೆಲಿವರಿ ಪೂರ್ಣಗೊಳಿಸಿದಾಗ ನಿಮ್ಮ ವ್ಯಾಲೆಟ್‌ಗೆ ₹{n} ಬರುತ್ತದೆ. ಅದರಿಂದ ನಿಮ್ಮ ಪಾಸ್‌ಗೆ ಪಾವತಿಸಿ." },
   "My wallet": { hi: "मेरा वॉलेट", kn: "ನನ್ನ ವ್ಯಾಲೆಟ್" },
   "Driver ID": { hi: "ड्राइवर आईडी", kn: "ಚಾಲಕ ಐಡಿ" },
+  "Your pass was renewed from your wallet.": { hi: "आपका पास वॉलेट से रिन्यू हो गया।", kn: "ನಿಮ್ಮ ಪಾಸ್ ಅನ್ನು ವ್ಯಾಲೆಟ್‌ನಿಂದ ನವೀಕರಿಸಲಾಗಿದೆ." },
+  "OK": { hi: "ठीक है", kn: "ಸರಿ" },
+  "₹{n} expires on {date}": { hi: "₹{n} की वैधता {date} को खत्म होगी", kn: "₹{n} ಅವಧಿ {date} ರಂದು ಮುಗಿಯುತ್ತದೆ" },
+  "Renew my pass automatically": { hi: "मेरा पास अपने आप रिन्यू करें", kn: "ನನ್ನ ಪಾಸ್ ತಾನಾಗಿ ನವೀಕರಿಸಿ" },
+  "When your pass ends, the same pass is bought from your wallet if there is enough credit.": { hi: "पास खत्म होने पर, वॉलेट में पर्याप्त क्रेडिट हो तो वही पास वॉलेट से खरीद लिया जाएगा।", kn: "ಪಾಸ್ ಮುಗಿದಾಗ, ವ್ಯಾಲೆಟ್‌ನಲ್ಲಿ ಸಾಕಷ್ಟು ಕ್ರೆಡಿಟ್ ಇದ್ದರೆ ಅದೇ ಪಾಸ್ ಅನ್ನು ವ್ಯಾಲೆಟ್‌ನಿಂದ ಖರೀದಿಸಲಾಗುತ್ತದೆ." },
 };

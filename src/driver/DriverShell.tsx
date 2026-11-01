@@ -85,8 +85,13 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
   const [editing, setEditing] = useState(false);
   const { t } = useT();
 
+  const [renewed, setRenewed] = useState(false);
+
   const load = useCallback(async () => {
     const sb = supabase();
+    // If the pass has run out and there is wallet credit, renew it first (does nothing if switched off or short of credit).
+    const { data: renewal } = await sb.rpc("driver_auto_renew");
+    if (renewal && typeof renewal === "object" && "id" in renewal && renewal.id) setRenewed(true);
     const { data } = await sb.from("drivers").select("*").eq("id", userId).maybeSingle();
     setDriver(data);
     const { data: passes } = await sb
@@ -154,7 +159,19 @@ function Gate({ userId, phone, children }: { userId: string; phone: string; chil
     );
   }
 
-  return <>{children(driver, pass, load)}</>;
+  return (
+    <>
+      {renewed && (
+        <div className="fixed inset-x-3 top-3 z-[60] flex items-center justify-between gap-3 rounded-2xl bg-green-700 px-4 py-3 text-sm font-medium text-white shadow-lg" role="status">
+          <span>{t("Your pass was renewed from your wallet.")}</span>
+          <button className="rounded-full bg-white/20 px-3 py-1 text-xs" onClick={() => setRenewed(false)}>
+            {t("OK")}
+          </button>
+        </div>
+      )}
+      {children(driver, pass, load)}
+    </>
+  );
 }
 
 function SignOut() {
