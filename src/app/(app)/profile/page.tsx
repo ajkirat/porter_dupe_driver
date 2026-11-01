@@ -9,6 +9,7 @@ import { SignOut } from "@/driver/DriverShell";
 import { useDriver } from "@/driver/DriverContext";
 import ReferBanner from "@/driver/ReferBanner";
 import DriverSignup from "@/driver/DriverSignup";
+import { useVehicles } from "@/driver/useVehicles";
 import { PhoneIcon } from "@/components/icons";
 import { KYC_DOCS } from "@/lib/types";
 
@@ -16,6 +17,7 @@ const SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
 
 export default function Profile() {
   const { driver, reload } = useDriver();
+  const vehicles = useVehicles();
   const { t } = useT();
   const [editing, setEditing] = useState(false);
 
@@ -54,7 +56,7 @@ export default function Profile() {
         {row(t("Driver ID"), driver.driver_code ?? "")}
         {row(t("Name"), driver.full_name)}
         {row(t("Phone"), driver.phone)}
-        {row(t("Bike"), driver.vehicle_number)}
+        {row(t("Vehicle"), `${vehicles.find((v) => v.code === driver.vehicle_type)?.name ?? driver.vehicle_type} · ${driver.vehicle_number}`)}
         {row("UPI", driver.upi_id ?? "")}
         <div className="pt-3">
           <button className="btn w-full" onClick={() => setEditing(true)}>

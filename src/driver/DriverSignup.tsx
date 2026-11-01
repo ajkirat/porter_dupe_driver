@@ -1,5 +1,7 @@
 "use client";
 
+import { useVehicles } from "./useVehicles";
+import { sizeCm, sizeFeet } from "@/lib/vehicles";
 import { useState } from "react";
 import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
 import { useT } from "@/i18n";
@@ -23,6 +25,7 @@ export default function DriverSignup({
   const [form, setForm] = useState({
     full_name: existing?.full_name ?? "",
     vehicle_number: existing?.vehicle_number ?? "",
+    vehicle_type: existing?.vehicle_type ?? "bike",
     upi_id: existing?.upi_id ?? "",
   });
   const [files, setFiles] = useState<Record<string, File>>({});
@@ -31,6 +34,7 @@ export default function DriverSignup({
   const [viaWhatsApp, setViaWhatsApp] = useState(false);
   const [selfie, setSelfie] = useState<File | null>(null);
   const [referral, setReferral] = useState("");
+  const vehicles = useVehicles();
 
   const docs = existing?.kyc_docs ?? {};
   const missing = KYC_DOCS.filter((d) => !files[d.key] && !docs[d.key]);
@@ -60,6 +64,7 @@ export default function DriverSignup({
           p_licence_number: existing?.licence_number ?? "",
           p_upi_id: form.upi_id || null,
           p_kyc_docs: uploaded,
+          ...(form.vehicle_type !== "bike" || existing?.vehicle_type !== "bike" ? { p_vehicle_type: form.vehicle_type } : {}),
         });
         if (error) throw error;
       } else {
@@ -68,6 +73,7 @@ export default function DriverSignup({
           phone,
           full_name: form.full_name,
           vehicle_number,
+          ...(form.vehicle_type !== "bike" ? { vehicle_type: form.vehicle_type } : {}),
           licence_number: "", // no longer asked; the column is required in the database
           upi_id: form.upi_id || null,
           kyc_docs: uploaded,
@@ -101,8 +107,26 @@ export default function DriverSignup({
         {t("Full name (as on licence)")}
         <input className="input" required {...field("full_name")} />
       </label>
+      <div>
+        <p className="label">{t("Your vehicle")}</p>
+        <div className="mt-1 space-y-2">
+          {vehicles.map((v) => (
+            <button
+              key={v.code}
+              type="button"
+              onClick={() => setForm({ ...form, vehicle_type: v.code })}
+              className={`w-full rounded-xl border-2 p-3 text-left ${form.vehicle_type === v.code ? "border-brand bg-orange-50" : "border-stone-200"}`}
+            >
+              <span className="block font-semibold">{v.name}</span>
+              <span className="block text-xs text-stone-600">{t("Up to {kg} kg", { kg: v.max_kg })} · {sizeFeet(v)}</span>
+              <span className="block text-xs text-stone-400">{sizeCm(v)}</span>
+            </button>
+          ))}
+        </div>
+        <p className="mt-1 text-xs text-stone-500">{t("You will only get jobs for this vehicle.")}</p>
+      </div>
       <label className="label">
-        {t("Bike number")}
+        {t("Vehicle number")}
         <input className="input uppercase" placeholder="KA01AB1234" required {...field("vehicle_number")} />
       </label>
       <label className="label">
