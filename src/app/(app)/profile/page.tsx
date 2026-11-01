@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import LanguagePicker from "@/i18n/LanguagePicker";
 import { useT } from "@/i18n";
+import DeleteAccount from "@/driver/DeleteAccount";
 import { SignOut } from "@/driver/DriverShell";
 import { useDriver } from "@/driver/DriverContext";
 import ReferBanner from "@/driver/ReferBanner";
@@ -97,6 +98,7 @@ export default function Profile() {
       </div>
 
       <SignOut />
+      <DeleteAccount />
       <p className="text-center text-xs text-stone-400">
         Pikop Driver · <Link href="/terms" className="underline">{t("Terms")}</Link> · <Link href="/privacy" className="underline">{t("Privacy policy")}</Link>
       </p>

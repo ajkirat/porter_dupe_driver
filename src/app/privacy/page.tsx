@@ -25,7 +25,7 @@ export default function Privacy() {
       <h2 className="text-lg font-semibold">Who else handles it</h2>
       <ul className="list-disc space-y-1 pl-5">
         <li>Supabase: our database, login and file storage.</li>
-        <li>Netlify: hosts the app.</li>
+        <li>Vercel: hosts the app.</li>
         <li>OpenStreetMap services: map pictures and route search receive the places being looked up.</li>
         <li>Our SMS provider: receives your mobile number to send login codes.</li>
         <li>Customers see your name, bike number, phone and live location during a trip you accepted.</li>
@@ -35,7 +35,7 @@ export default function Privacy() {
       <p>Account and verification data is kept while your account is active. Selfies and documents are deleted when you ask us to delete your account, or after [add period] of inactivity. Trip records may be kept longer where the law requires.</p>
 
       <h2 className="text-lg font-semibold">Your choices</h2>
-      <p>You can switch offline at any time to stop location collection. You can ask us to see, correct or delete your data by contacting us below. You can also turn off location for the app in your phone settings, but you will not be able to take jobs.</p>
+      <p>You can switch offline at any time to stop location collection. You can delete your account in the app (Profile, then Delete my account), and ask us to see or correct your data by contacting us below. You can also turn off location for the app in your phone settings, but you will not be able to take jobs.</p>
 
       <h2 className="text-lg font-semibold">Contact</h2>
       <p>{CONTACT}</p>
