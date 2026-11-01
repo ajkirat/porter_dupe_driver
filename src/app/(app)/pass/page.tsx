@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useT } from "@/i18n";
 import { useDriver } from "@/driver/DriverContext";
+import ReferBanner from "@/driver/ReferBanner";
 import { timeLeft } from "@/lib/earnings";
 import { supabase } from "@/lib/supabase";
 import type { DriverPass } from "@/lib/types";
@@ -51,6 +52,9 @@ export default function PassPage() {
         )}
       </div>
 
+      <div className="-mx-4 -mt-4">
+        <ReferBanner />
+      </div>
       <Link href="/wallet" className="card flex items-center justify-between gap-3">
         <span>
           <span className="block font-semibold">{t("Wallet")}</span>

@@ -204,4 +204,8 @@ export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
   "Wallet history": { hi: "वॉलेट इतिहास", kn: "ವ್ಯಾಲೆಟ್ ಇತಿಹಾಸ" },
   "Nothing yet.": { hi: "अभी कुछ नहीं।", kn: "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ." },
   "Customer used ₹{n} credit. We add ₹{n} to your wallet after delivery.": { hi: "ग्राहक ने ₹{n} क्रेडिट इस्तेमाल किया। डिलीवरी के बाद हम आपके वॉलेट में ₹{n} जोड़ देंगे।", kn: "ಗ್ರಾಹಕರು ₹{n} ಕ್ರೆಡಿಟ್ ಬಳಸಿದ್ದಾರೆ. ಡೆಲಿವರಿ ನಂತರ ನಿಮ್ಮ ವ್ಯಾಲೆಟ್‌ಗೆ ₹{n} ಸೇರಿಸುತ್ತೇವೆ." },
+  "Refer & earn": { hi: "रेफ़र करें और कमाएं", kn: "ರೆಫರ್ ಮಾಡಿ ಮತ್ತು ಗಳಿಸಿ" },
+  "Refer a driver, earn ₹{n}": { hi: "किसी ड्राइवर को जोड़ें, ₹{n} कमाएं", kn: "ಚಾಲಕರನ್ನು ಸೇರಿಸಿ, ₹{n} ಗಳಿಸಿ" },
+  "You get ₹{n} in your wallet when they finish their first delivery. Use it to pay for your pass.": { hi: "जब वे अपनी पहली डिलीवरी पूरी करेंगे तो आपके वॉलेट में ₹{n} आएंगे। इससे अपना पास भरें।", kn: "ಅವರು ಮೊದಲ ಡೆಲಿವರಿ ಪೂರ್ಣಗೊಳಿಸಿದಾಗ ನಿಮ್ಮ ವ್ಯಾಲೆಟ್‌ಗೆ ₹{n} ಬರುತ್ತದೆ. ಅದರಿಂದ ನಿಮ್ಮ ಪಾಸ್‌ಗೆ ಪಾವತಿಸಿ." },
+  "My wallet": { hi: "मेरा वॉलेट", kn: "ನನ್ನ ವ್ಯಾಲೆಟ್" },
 };

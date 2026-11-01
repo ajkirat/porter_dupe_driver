@@ -6,6 +6,7 @@ import ActiveTrip from "@/driver/ActiveTrip";
 import { useDriver } from "@/driver/DriverContext";
 import JobCard from "@/driver/JobCard";
 import OfferModal from "@/driver/OfferModal";
+import ReferBanner from "@/driver/ReferBanner";
 import { useDelivered } from "@/driver/useDelivered";
 import { summarize, timeLeft } from "@/lib/earnings";
 import { useT } from "@/i18n";
@@ -160,6 +161,7 @@ export default function Home() {
       <OnlineCard />
       <TodayStrip />
       <PassWarning />
+      <ReferBanner />
 
       <div className="relative mx-4 mt-4 h-44 overflow-hidden rounded-2xl">
         <Map className="h-full" markers={me ? [{ pos: me, label: "You", kind: "driver" }] : []} focus={me ? { ...me, zoom: 14, n: 1 } : null} />

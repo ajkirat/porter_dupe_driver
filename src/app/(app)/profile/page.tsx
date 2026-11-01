@@ -6,6 +6,7 @@ import LanguagePicker from "@/i18n/LanguagePicker";
 import { useT } from "@/i18n";
 import { SignOut } from "@/driver/DriverShell";
 import { useDriver } from "@/driver/DriverContext";
+import ReferBanner from "@/driver/ReferBanner";
 import DriverSignup from "@/driver/DriverSignup";
 import { PhoneIcon } from "@/components/icons";
 import { KYC_DOCS } from "@/lib/types";
@@ -45,6 +46,9 @@ export default function Profile() {
   return (
     <div className="space-y-4 p-4">
       <h1 className="text-xl font-bold">{t("Profile")}</h1>
+      <div className="-mx-4">
+        <ReferBanner />
+      </div>
       <div className="card divide-y divide-stone-100 py-2">
         {row(t("Name"), driver.full_name)}
         {row(t("Phone"), driver.phone)}
