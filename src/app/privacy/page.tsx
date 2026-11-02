@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Privacy policy" };
 
-const CONTACT = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "[add contact email]";
+const CONTACT = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "pikopsupport@gmail.com";
 
 // DRAFT. Have this reviewed by a qualified person before launch, and keep it matching what the app really does.
 export default function Privacy() {
@@ -32,7 +32,7 @@ export default function Privacy() {
       </ul>
 
       <h2 className="text-lg font-semibold">How long we keep it</h2>
-      <p>Account and verification data is kept while your account is active. Selfies and documents are deleted when you ask us to delete your account, or after [add period] of inactivity. Trip records may be kept longer where the law requires.</p>
+      <p>Account and verification data is kept while your account is active. Selfies and documents are deleted within 30 days of you asking us to delete your account, or after 12 months of inactivity. Trip records may be kept longer where the law requires.</p>
 
       <h2 className="text-lg font-semibold">Your choices</h2>
       <p>You can switch offline at any time to stop location collection. You can delete your account in the app (Profile, then Delete my account), and ask us to see or correct your data by contacting us below. You can also turn off location for the app in your phone settings, but you will not be able to take jobs.</p>
