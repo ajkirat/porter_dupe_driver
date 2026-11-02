@@ -3,6 +3,11 @@
 @theme {
   --color-brand: #ea580c;
   --color-brand-dark: #c2410c;
+  /* Larger small text: easier to read outdoors and for drivers who read slowly. */
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.35;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.45;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 

@@ -29,7 +29,7 @@ function TabBar() {
       {TABS.map(({ href, label, Icon }) => {
         const on = href === "/" ? path === "/" : path.startsWith(href);
         return (
-          <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${on ? "text-brand" : "text-stone-500"}`}>
+          <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-2 text-xs font-medium ${on ? "text-brand" : "text-stone-500"}`}>
             <Icon className="h-6 w-6" />
             {t(label)}
           </Link>

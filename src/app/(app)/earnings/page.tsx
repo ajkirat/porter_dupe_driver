@@ -61,9 +61,9 @@ export default function Earnings() {
         <div className="flex h-32 items-end gap-2" role="img" aria-label={t("Daily earnings, last 7 days")}>
           {s.days.map((d) => (
             <div key={d.date.toISOString()} className="flex flex-1 flex-col items-center gap-1">
-              <span className="text-[10px] text-stone-500">{d.earned ? `₹${d.earned}` : ""}</span>
+              <span className="text-xs text-stone-500">{d.earned ? `₹${d.earned}` : ""}</span>
               <div className="w-full rounded-t-md bg-brand" style={{ height: `${Math.max(4, (d.earned / max) * 88)}px`, opacity: d.earned ? 1 : 0.2 }} />
-              <span className="text-[10px] text-stone-500">{d.date.toLocaleDateString(locale, { weekday: "short" })}</span>
+              <span className="text-xs text-stone-500">{d.date.toLocaleDateString(locale, { weekday: "short" })}</span>
             </div>
           ))}
         </div>

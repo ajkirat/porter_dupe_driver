@@ -7,6 +7,7 @@ import { useT } from "@/i18n";
 import { navigationUrl } from "@/lib/geo";
 import { formatKm } from "@/lib/fare";
 import { useDriver } from "./DriverContext";
+import SupportCall from "./SupportCall";
 
 const CANCEL_REASONS = ["Customer not reachable", "Vehicle problem", "Too far from me", "Item not allowed", "Other"];
 
@@ -135,6 +136,7 @@ export default function ActiveTrip() {
             {t("Can't do this job?")}
           </button>
         ))}
+      <SupportCall />
     </div>
   );
 }

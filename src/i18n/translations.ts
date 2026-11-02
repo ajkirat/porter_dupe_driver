@@ -1,6 +1,7 @@
 // English text is the key. Hindi (hi) and Kannada (kn) translations. Placeholders like {name} must be kept.
 // Please have a native speaker review these before launch.
 export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
+  "Call Pikop for help": { hi: "मदद के लिए Pikop को फ़ोन करें", kn: "ಸಹಾಯಕ್ಕಾಗಿ Pikop ಗೆ ಕರೆ ಮಾಡಿ" },
   // Location (Android app)
   "Pikop Driver is online": { hi: "Pikop Driver ऑनलाइन है", kn: "Pikop Driver ಆನ್‌ಲೈನ್ ಇದೆ" },
   "Sharing your location so customers can follow their parcel.": { hi: "आपकी लोकेशन साझा हो रही है ताकि ग्राहक अपना पार्सल देख सकें।", kn: "ಗ್ರಾಹಕರು ತಮ್ಮ ಪಾರ್ಸೆಲ್ ಅನುಸರಿಸಲು ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಹಂಚಲಾಗುತ್ತಿದೆ." },
