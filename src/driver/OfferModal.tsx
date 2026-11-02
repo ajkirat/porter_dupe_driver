@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckIcon } from "@/components/icons";
 import { useEffect, useState } from "react";
 import { useT } from "@/i18n";
 import { playAlert } from "@/lib/alert";
@@ -55,7 +56,8 @@ export default function OfferModal({
           <button className="btn py-3" onClick={onReject} disabled={busy}>
             {t("Pass")}
           </button>
-          <button className="btn btn-primary col-span-2 py-3 text-base" onClick={onAccept} disabled={busy}>
+          <button className="btn btn-primary col-span-2 gap-2 py-4 text-lg" onClick={onAccept} disabled={busy}>
+            <CheckIcon className="h-6 w-6" />
             {t("Accept ₹{fare}", { fare: job.fare_rupees })}
           </button>
         </div>

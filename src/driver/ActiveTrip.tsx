@@ -1,8 +1,8 @@
 "use client";
 
+import { CheckIcon, PhoneIcon, PinIcon } from "@/components/icons";
 import { useState } from "react";
 import Map from "@/components/Map";
-import { PhoneIcon } from "@/components/icons";
 import { useT } from "@/i18n";
 import { navigationUrl } from "@/lib/geo";
 import { formatKm } from "@/lib/fare";
@@ -80,7 +80,8 @@ export default function ActiveTrip() {
       </div>
 
       {pickupLeg && !arrived && (
-        <button className="btn btn-primary w-full py-3 text-base" disabled={busy} onClick={() => run("mark_arrived", { p_job: job.id })}>
+        <button className="btn btn-primary w-full gap-2 py-4 text-lg" disabled={busy} onClick={() => run("mark_arrived", { p_job: job.id })}>
+          <PinIcon className="h-6 w-6" />
           {t("I've arrived at pickup")}
         </button>
       )}
@@ -104,7 +105,8 @@ export default function ActiveTrip() {
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
             />
           </label>
-          <button className="btn btn-primary w-full py-3 text-base" disabled={busy || otp.length !== 4}>
+          <button className="btn btn-primary w-full gap-2 py-4 text-lg" disabled={busy || otp.length !== 4}>
+            <CheckIcon className="h-6 w-6" />
             {pickupLeg ? t("Confirm pickup") : t("Confirm delivery")}
           </button>
         </form>

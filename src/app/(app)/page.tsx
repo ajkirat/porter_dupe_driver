@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckIcon } from "@/components/icons";
 import { useMemo, useRef, useState } from "react";
 import Map from "@/components/Map";
 import ActiveTrip from "@/driver/ActiveTrip";
@@ -185,7 +186,8 @@ export default function Home() {
                 <button className="btn" disabled={busy} onClick={() => act("reject_job", { p_job: job.id })}>
                   {t("Hide")}
                 </button>
-                <button className="btn btn-primary" disabled={busy} onClick={() => accept(job.id)}>
+                <button className="btn btn-primary gap-2 py-3 text-base" disabled={busy} onClick={() => accept(job.id)}>
+                  <CheckIcon className="h-5 w-5" />
                   {t("Accept")}
                 </button>
               </div>
