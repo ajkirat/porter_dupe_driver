@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import LanguagePicker from "@/i18n/LanguagePicker";
 import { useT } from "@/i18n";
 import DeleteAccount from "@/driver/DeleteAccount";
@@ -13,13 +14,19 @@ import { useVehicles } from "@/driver/useVehicles";
 import { PhoneIcon } from "@/components/icons";
 import { KYC_DOCS, requiredExtraDocs } from "@/lib/types";
 
-const SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
+const ENV_SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
 
 export default function Profile() {
   const { driver, reload } = useDriver();
   const vehicles = useVehicles();
   const { t } = useT();
   const [editing, setEditing] = useState(false);
+  // The number and hours come from Admin -> Settings; the env variable is the fallback.
+  const [adminSupport, setAdminSupport] = useState<{ phone: string | null; hours: string | null }>({ phone: null, hours: null });
+  useEffect(() => {
+    supabase().from("settings").select("*").single().then(({ data }) => data && setAdminSupport({ phone: data.support_phone ?? null, hours: data.support_hours ?? null }));
+  }, []);
+  const SUPPORT = adminSupport.phone || ENV_SUPPORT;
 
   if (editing)
     return (
@@ -80,6 +87,7 @@ export default function Profile() {
 
       <div className="card space-y-2">
         <h2 className="font-semibold">{t("Need help?")}</h2>
+        {adminSupport.hours && <p className="text-xs text-stone-500">{adminSupport.hours}</p>}
         {SUPPORT ? (
           <div className="grid grid-cols-2 gap-2">
             <a className="btn gap-2" href={`tel:${SUPPORT}`}>
