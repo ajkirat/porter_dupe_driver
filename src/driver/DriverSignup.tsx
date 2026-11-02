@@ -8,7 +8,9 @@ import { DOCS_WHATSAPP, docsWhatsAppUrl } from "@/lib/brand";
 import { useT } from "@/i18n";
 import { uploadSelfie } from "@/lib/selfie";
 import { errorText, supabase } from "@/lib/supabase";
-import { KYC_DOCS, type Driver } from "@/lib/types";
+import { KYC_DOCS, requiredExtraDocs, type Driver } from "@/lib/types";
+
+const stamp = () => Date.now();
 
 // First-time signup, and re-submission after a rejected KYC.
 export default function DriverSignup({
@@ -38,11 +40,15 @@ export default function DriverSignup({
   const vehicles = useVehicles();
 
   const docs = existing?.kyc_docs ?? {};
+  const extraDocs = requiredExtraDocs(form.vehicle_type);
+  const missingExtra = extraDocs.filter((d) => !files[d.key] && !docs[d.key]);
   const missing = KYC_DOCS.filter((d) => !files[d.key] && !docs[d.key]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!selfie && !docs.selfie) return setError(t("Please take a selfie. It is required."));
+    // Insurance and permit must be uploaded here; they cannot be sent over WhatsApp.
+    if (missingExtra.length) return setError(t("Please add: {list}", { list: missingExtra.map((d) => t(d.label)).join(", ") }));
     if (missing.length && !viaWhatsApp) return setError(t("Please add: {list}", { list: missing.map((d) => t(d.label)).join(", ") }));
     setBusy(true);
     setError("");
@@ -52,7 +58,7 @@ export default function DriverSignup({
       if (selfie) uploaded.selfie = await uploadSelfie(userId, selfie, "signup");
       for (const [key, file] of Object.entries(files)) {
         const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-        const path = `${userId}/${key}-${Date.now()}.${ext}`;
+        const path = `${userId}/${key}-${stamp()}.${ext}`;
         const { error } = await sb.storage.from("kyc").upload(path, file, { upsert: true });
         if (error) throw error;
         uploaded[key] = path;
@@ -151,7 +157,7 @@ export default function DriverSignup({
       </label>
       <fieldset className="space-y-2">
         <legend className="label mb-1">{t("Documents")}</legend>
-        {KYC_DOCS.map((d) => (
+        {[...KYC_DOCS, ...extraDocs].map((d) => (
           <label key={d.key} className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-stone-200 p-3 text-sm">
             <span className="min-w-0 truncate">
               {t(d.label)}

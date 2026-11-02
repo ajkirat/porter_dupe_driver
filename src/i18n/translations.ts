@@ -60,6 +60,8 @@ export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
   "Driving licence": { hi: "ड्राइविंग लाइसेंस", kn: "ಡ್ರೈವಿಂಗ್ ಲೈಸೆನ್ಸ್" },
   "Vehicle RC": { hi: "गाड़ी की RC", kn: "ವಾಹನದ RC" },
   "Aadhaar (front)": { hi: "आधार (आगे का हिस्सा)", kn: "ಆಧಾರ್ (ಮುಂಭಾಗ)" },
+  "Vehicle insurance": { hi: "गाड़ी का बीमा", kn: "ವಾಹನ ವಿಮೆ" },
+  "Commercial registration / permit": { hi: "कमर्शियल रजिस्ट्रेशन / परमिट", kn: "ವಾಣಿಜ್ಯ ನೋಂದಣಿ / ಪರವಾನಗಿ" },
   "Your photo": { hi: "आपकी फ़ोटो", kn: "ನಿಮ್ಮ ಫೋಟೋ" },
   "✓ Change": { hi: "✓ बदलें", kn: "✓ ಬದಲಿಸಿ" },
   "Add photo": { hi: "फ़ोटो जोड़ें", kn: "ಫೋಟೋ ಸೇರಿಸಿ" },

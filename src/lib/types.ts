@@ -104,6 +104,15 @@ export const KYC_DOCS = [
   { key: "photo", label: "Your photo" },
 ] as const;
 
+// Required on top of KYC_DOCS before approval: insurance for every vehicle, a commercial permit for mini trucks.
+export const EXTRA_DOCS = [
+  { key: "insurance", label: "Vehicle insurance" },
+  { key: "permit", label: "Commercial registration / permit" },
+] as const;
+export function requiredExtraDocs(vehicleType: string) {
+  return EXTRA_DOCS.filter((d) => d.key === "insurance" || vehicleType !== "bike");
+}
+
 export const STATUS_LABEL: Record<JobStatus, string> = {
   requested: "Finding a driver",
   assigned: "Offered to a driver",

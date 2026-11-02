@@ -11,7 +11,7 @@ import ReferBanner from "@/driver/ReferBanner";
 import DriverSignup from "@/driver/DriverSignup";
 import { useVehicles } from "@/driver/useVehicles";
 import { PhoneIcon } from "@/components/icons";
-import { KYC_DOCS } from "@/lib/types";
+import { KYC_DOCS, requiredExtraDocs } from "@/lib/types";
 
 const SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
 
@@ -70,7 +70,7 @@ export default function Profile() {
           <h2 className="font-semibold">{t("Documents")}</h2>
           <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">{t("Approved")}</span>
         </div>
-        {KYC_DOCS.map((d) => (
+        {[...KYC_DOCS, ...requiredExtraDocs(driver.vehicle_type)].map((d) => (
           <div key={d.key} className="flex justify-between text-sm">
             <span>{t(d.label)}</span>
             <span className={driver.kyc_docs[d.key] ? "text-green-700" : "text-red-600"}>{driver.kyc_docs[d.key] ? t("✓ Uploaded") : t("Missing")}</span>
