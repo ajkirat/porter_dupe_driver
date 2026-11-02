@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useDriver } from "@/driver/DriverContext";
 import { useT } from "@/i18n";
+import { useReferralTrips } from "@/driver/useReferralTrips";
 import { errorText, supabase } from "@/lib/supabase";
 import type { ReferralItem, WalletEntry } from "@/lib/types";
 
@@ -12,6 +13,7 @@ const SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
 export default function WalletPage() {
   const { driver, prices, reload } = useDriver();
   const { t, locale } = useT();
+  const refTrips = useReferralTrips();
   const [balance, setBalance] = useState<number | null>(null);
   const [code, setCode] = useState("");
   const [entries, setEntries] = useState<WalletEntry[]>([]);
@@ -72,7 +74,7 @@ export default function WalletPage() {
     const { error } = await supabase().rpc("apply_referral_code", { p_code: apply, p_wallet: "driver" });
     if (error) setMsg({ ok: false, text: errorText(error) });
     else {
-      setMsg({ ok: true, text: t("Code added. Your friend gets ₹ credit after your first delivery.") });
+      setMsg({ ok: true, text: t("Code added. Your friend gets ₹ credit after your first {trips} deliveries.", { trips: refTrips }) });
       setApply("");
       await load();
     }
@@ -149,7 +151,7 @@ export default function WalletPage() {
 
       <div className="card space-y-3">
         <h2 className="font-semibold">{t("Refer a driver")}</h2>
-        <p className="text-sm text-stone-600">{t("When a driver you refer finishes their first delivery, you get ₹ credit in your wallet.")}</p>
+        <p className="text-sm text-stone-600">{t("When a driver you refer finishes {trips} deliveries, you get ₹ credit in your wallet.", { trips: refTrips })}</p>
         <div className="rounded-xl bg-orange-50 p-3 text-center">
           <p className="text-xs text-stone-500">{t("Your code")}</p>
           <p className="text-3xl font-extrabold tracking-widest">{code || "······"}</p>
@@ -163,7 +165,7 @@ export default function WalletPage() {
               <div key={i} className="flex items-center justify-between py-2 text-sm">
                 <span>{r.who}</span>
                 <span className={r.status === "rewarded" ? "font-semibold text-green-700" : "text-stone-500"}>
-                  {r.status === "rewarded" ? `+₹${r.reward ?? 0}` : r.status === "capped" ? t("Limit reached") : t("Waiting for first delivery")}
+                  {r.status === "rewarded" ? `+₹${r.reward ?? 0}` : r.status === "capped" ? t("Limit reached") : t("Waiting for {trips} deliveries", { trips: refTrips })}
                 </span>
               </div>
             ))}

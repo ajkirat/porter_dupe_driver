@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useT } from "@/i18n";
 import { supabase } from "@/lib/supabase";
+import { useReferralTrips } from "./useReferralTrips";
 
 // A hard-to-miss "refer a driver, earn ₹" card: shows the amount the admin has set, the driver's own code and a WhatsApp share button.
 // Stays hidden until the referral migration has been applied, so an older database never shows a broken card.
 export default function ReferBanner() {
   const { t } = useT();
+  const trips = useReferralTrips();
   const [info, setInfo] = useState<{ code: string; reward: number } | null>(null);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function ReferBanner() {
     <div className="mx-4 mt-4 overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500 to-orange-600 p-5 text-white shadow-md">
       <p className="text-xs font-semibold uppercase tracking-wide opacity-90">{t("Refer & earn")}</p>
       <p className="mt-1 text-2xl font-extrabold leading-tight">{t("Refer a driver, earn ₹{n}", { n: info.reward })}</p>
-      <p className="mt-1 text-sm opacity-95">{t("You get ₹{n} in your wallet when they finish their first delivery. Use it to pay for your pass.", { n: info.reward })}</p>
+      <p className="mt-1 text-sm opacity-95">{t("You get ₹{n} in your wallet when they finish {trips} deliveries. Use it to pay for your pass.", { n: info.reward, trips })}</p>
       <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-white/20 px-4 py-3">
         <span className="text-xs opacity-90">{t("Your code")}</span>
         <span className="text-2xl font-extrabold tracking-widest">{info.code}</span>
