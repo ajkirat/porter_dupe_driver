@@ -1,6 +1,8 @@
 // English text is the key. Hindi (hi) and Kannada (kn) translations. Placeholders like {name} must be kept.
 // Please have a native speaker review these before launch.
 export const TRANSLATIONS: Record<string, { hi: string; kn: string }> = {
+  "Sounds": { hi: "आवाज़ें", kn: "ಶಬ್ದಗಳು" },
+  "Short tones and a buzz when something happens.": { hi: "कुछ होने पर छोटी आवाज़ और कंपन।", kn: "ಏನಾದರೂ ಆದಾಗ ಚಿಕ್ಕ ಶಬ್ದ ಮತ್ತು ಕಂಪನ." },
   "Call Pikop for help": { hi: "मदद के लिए Pikop को फ़ोन करें", kn: "ಸಹಾಯಕ್ಕಾಗಿ Pikop ಗೆ ಕರೆ ಮಾಡಿ" },
   // Location (Android app)
   "Pikop Driver is online": { hi: "Pikop Driver ऑनलाइन है", kn: "Pikop Driver ಆನ್‌ಲೈನ್ ಇದೆ" },

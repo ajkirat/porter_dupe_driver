@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n";
 import { supabase } from "@/lib/supabase";
 import type { Job } from "@/lib/types";
 import { useDriver } from "./DriverContext";
 import PayQr from "./PayQr";
+import SuccessBurst from "@/components/SuccessBurst";
+import { play } from "@/lib/sound";
 
 const WINDOW_MS = 30 * 60 * 1000;
 
@@ -31,12 +33,22 @@ export default function JustDelivered() {
     };
   }, [driver.id, current?.id]);
 
+  // The customer says they paid: a bright "money" ping so the driver knows without looking.
+  const paidVia = job?.paid_via ?? null;
+  const seenPaid = useRef<string | null | undefined>(undefined);
+  useEffect(() => {
+    if (!job) return;
+    if (seenPaid.current !== undefined && seenPaid.current === null && paidVia) play("cash");
+    seenPaid.current = paidVia;
+  }, [job, paidVia]);
+
   if (!job || current || hidden.includes(job.id)) return null;
   const due = job.fare_rupees - (job.wallet_discount ?? 0);
   return (
     <div className="mx-4 mt-3 rounded-2xl bg-green-600 p-4 text-white">
-      <p className="text-sm opacity-90">{t("Trip complete. Customer pays you directly.")}</p>
-      <p className="text-3xl font-extrabold">₹{due}</p>
+      <SuccessBurst className="mb-2 h-16 w-16" />
+      <p className="text-center text-sm opacity-90">{t("Trip complete. Customer pays you directly.")}</p>
+      <p className="text-center text-3xl font-extrabold">₹{due}</p>
       {job.paid_via && (
         <p className="mt-2 rounded-lg bg-white/20 px-2 py-1 text-sm font-medium">
           {t("Customer says they paid by {mode}", { mode: job.paid_via === "cash" ? t("cash") : job.paid_via === "upi" ? t("UPI") : t("QR") })}

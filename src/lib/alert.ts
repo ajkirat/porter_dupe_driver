@@ -1,6 +1,8 @@
 // A short beep-beep-beep and buzz for new job requests. Uses the Web Audio API so no sound file is needed.
 // Browsers only allow sound after a tap, so unlockAlert() is called when the driver taps "Go online".
 
+import { soundOn } from "./sound";
+
 let ctx: AudioContext | null = null;
 
 export function unlockAlert() {
@@ -13,6 +15,7 @@ export function unlockAlert() {
 }
 
 export function playAlert() {
+  if (!soundOn()) return;
   try {
     navigator.vibrate?.([300, 150, 300, 150, 300]);
   } catch {}

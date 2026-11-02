@@ -13,6 +13,7 @@ import DriverSignup from "@/driver/DriverSignup";
 import { useVehicles } from "@/driver/useVehicles";
 import { PhoneIcon } from "@/components/icons";
 import { KYC_DOCS, requiredExtraDocs } from "@/lib/types";
+import SoundToggle from "@/components/SoundToggle";
 
 const ENV_SUPPORT = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
 
@@ -106,6 +107,8 @@ export default function Profile() {
         <h2 className="font-semibold">{t("Language")}</h2>
         <LanguagePicker />
       </div>
+
+      <SoundToggle />
 
       <SignOut />
       <DeleteAccount />

@@ -8,6 +8,7 @@ import { isNative, startBackgroundLocation } from "@/lib/native";
 import { registerForPush } from "@/lib/push";
 import { errorText, supabase } from "@/lib/supabase";
 import type { Driver, DriverPass, Job } from "@/lib/types";
+import { play, type Cue } from "@/lib/sound";
 
 const PUSH_IDLE_MS = 15000;
 const STILL_PUSH_MS = 60000;
@@ -204,7 +205,13 @@ export function DriverProvider({
     async (fn: string, args: Record<string, unknown>) => {
       setError("");
       const { error } = await supabase().rpc(fn, args);
-      if (error) setError(errorText(error));
+      if (error) {
+        setError(errorText(error));
+        play("error");
+      } else {
+        const cue: Record<string, Cue> = { accept_job: "confirm", mark_arrived: "arrive", mark_picked_up: "confirm", mark_delivered: "success", driver_cancel_job: "cancel", reject_job: "cancel" };
+        play(cue[fn] ?? (fn === "driver_set_online" ? (args.p_online ? "confirm" : "ok") : "ok"));
+      }
       reload();
       void refresh();
       return !error;
